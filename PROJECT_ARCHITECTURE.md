@@ -35,8 +35,8 @@
 └──────────────────────┬──────────────────────────────┘
                        │
 ┌──────────────────────▼──────────────────────────────┐
-│         Next.js Middleware & App Router             │
-│  • Subdomain parsing (middleware.ts)                │
+│         Next.js Proxy & App Router                  │
+│  • Subdomain parsing (proxy.ts)                    │
 │  • Multi-tenant context injection                   │
 │  • Dynamic route resolution                         │
 └──────────────────────┬──────────────────────────────┘
@@ -77,7 +77,7 @@
 - Localhost support: `{store-slug}.localhost` for local development
 
 **How It Works:**
-1. **Middleware** (`middleware.ts`) intercepts every request
+1. **Proxy** (`proxy.ts`) intercepts every request
 2. Extracts hostname from request headers
 3. Resolves tenant slug from subdomain (e.g., `rifah` from `rifah.libaas.online`)
 4. Injects `x-store-slug` header into request context
@@ -120,7 +120,7 @@ libaas-online/
 ├── public/                    # Static assets (favicon, etc)
 │   └── .gitkeep
 │
-├── middleware.ts              # Next.js middleware (subdomain → store slug)
+├── proxy.ts                   # Next.js proxy (subdomain → store slug)
 ├── next.config.ts            # Next.js configuration
 ├── tsconfig.json             # TypeScript configuration
 ├── tailwind.config.ts        # Tailwind CSS configuration
@@ -239,7 +239,7 @@ CREATE TABLE order_items (
   order_id UUID NOT NULL,           -- Foreign key to orders
   product_variant_id UUID NOT NULL, -- Foreign key to product_variants
   quantity INTEGER NOT NULL,
-  unit_price NUMERIC(12, 2)         -- Price at time of order
+  price_at_purchase NUMERIC(12, 2)         -- Price at time of order
 );
 ```
 
@@ -263,8 +263,8 @@ CREATE TABLE order_items (
 
 ## 📄 Key Files & Their Purpose
 
-### `middleware.ts`
-**Purpose:** Route requests to correct tenant based on subdomain.
+### `proxy.ts`
+**Purpose:** Route requests to the correct tenant based on subdomain.
 
 **Flow:**
 1. Extract hostname from request
@@ -284,7 +284,7 @@ CREATE TABLE order_items (
 **Purpose:** Dynamic storefront landing page (different content per store).
 
 **How It Works:**
-1. Read `x-store-slug` header from middleware
+1. Read `x-store-slug` header from proxy
 2. If no slug, return 404 (no store found)
 3. Query Supabase:
    - Fetch store details (`stores` table)
@@ -438,7 +438,7 @@ node scripts/create-store.mjs --slug rifah --name "Rifah Collection" --email own
 
 **Flow:**
 1. Customer visits `https://rifah.libaas.online`
-2. Middleware resolves `store_slug='rifah'`
+2. Proxy resolves `store_slug='rifah'`
 3. App fetches:
    - Store details
    - Active products
@@ -504,7 +504,7 @@ CREATE POLICY "Customers see active products"
 The `SUPABASE_SERVICE_ROLE_KEY` is used **only on the server**:
 - Never exposed to browser / client
 - Used in `scripts/create-store.mjs` to bypass RLS
-- Used by server components/middleware when admin operations needed
+- Used by server components/proxy when admin operations are needed
 
 **Environment Setup:**
 ```bash
@@ -641,7 +641,7 @@ curl -H "Host: other-store.localhost:3000" http://localhost:3000
 
 ### Debugging Tenant Resolution
 
-Add debug logs in `middleware.ts`:
+Add debug logs in `proxy.ts`:
 
 ```typescript
 console.log("Host:", host);

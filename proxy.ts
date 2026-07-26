@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 const ROOT_DOMAINS = new Set(["libaas.online", "www.libaas.online"]);
 const LOCALHOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const host =
     request.headers.get("host") ??
     request.headers.get("x-forwarded-host") ??

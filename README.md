@@ -83,7 +83,7 @@ app/                    # Next.js pages (storefront UI)
 lib/                    # Utilities (Supabase clients, types, queries)
 supabase/               # Database schema & migrations
 scripts/                # CLI tools (create-store.mjs)
-middleware.ts           # Subdomain routing
+proxy.ts               # Subdomain routing
 ```
 
 ---
@@ -134,7 +134,7 @@ Edit `/etc/hosts` (or `C:\Windows\System32\drivers\etc\hosts` on Windows):
 Then visit `http://store1.localhost:3000`
 
 ### Debug tenant resolution
-Add logs in `middleware.ts` to see which tenant slug is resolved.
+Add logs in `proxy.ts` to see which tenant slug is resolved.
 
 ---
 
