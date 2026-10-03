@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "../../../lib/supabase/server";
 import { ProductsDashboard } from "../../../components/owner/products-dashboard";
@@ -31,6 +32,9 @@ type VariantRecord = {
 };
 
 export default async function ProductsPage() {
+  const requestHeaders = await headers();
+  const expectedStoreSlug = requestHeaders.get("x-store-slug")?.trim() || null;
+
   const supabase = await createClient();
 
   const {
@@ -40,6 +44,24 @@ export default async function ProductsPage() {
 
   if (userError || !user) {
     redirect("/login");
+  }
+
+  if (!expectedStoreSlug) {
+    await supabase.auth.signOut();
+
+    return (
+      <main className="min-h-screen bg-zinc-50 px-4 py-10 text-zinc-900 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
+          <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
+            Owner dashboard
+          </p>
+          <h1 className="mt-2 text-2xl font-semibold">Please log in at your own store&apos;s address</h1>
+          <p className="mt-3 text-sm leading-6 text-zinc-600">
+            Your session has been cleared because this address does not match your store&apos;s login page.
+          </p>
+        </div>
+      </main>
+    );
   }
 
   const { data: store, error: storeError } = await supabase
@@ -52,16 +74,18 @@ export default async function ProductsPage() {
     throw new Error("Unable to load your store right now.");
   }
 
-  if (!store) {
+  if (!store || store.slug !== expectedStoreSlug) {
+    await supabase.auth.signOut();
+
     return (
       <main className="min-h-screen bg-zinc-50 px-4 py-10 text-zinc-900 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
             Owner dashboard
           </p>
-          <h1 className="mt-2 text-2xl font-semibold">No store is linked to this account</h1>
+          <h1 className="mt-2 text-2xl font-semibold">Please log in at your own store&apos;s address</h1>
           <p className="mt-3 text-sm leading-6 text-zinc-600">
-            The bootstrap script should have created exactly one store for the owner account you signed in with.
+            Your session has been cleared because this address does not match your store&apos;s login page.
           </p>
         </div>
       </main>

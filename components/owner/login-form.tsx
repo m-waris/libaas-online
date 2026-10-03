@@ -9,7 +9,11 @@ type LoginFormState = {
   password: string;
 };
 
-export function LoginForm() {
+type LoginFormProps = {
+  expectedStoreSlug: string | null;
+};
+
+export function LoginForm({ expectedStoreSlug }: LoginFormProps) {
   const router = useRouter();
   const [form, setForm] = useState<LoginFormState>({
     email: "",
@@ -24,13 +28,45 @@ export function LoginForm() {
     setIsSubmitting(true);
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error: signInError } = await supabase.auth.signInWithPassword({
       email: form.email.trim(),
       password: form.password,
     });
 
-    if (error) {
-      setMessage(error.message);
+    if (signInError) {
+      setMessage(signInError.message);
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!expectedStoreSlug) {
+      await supabase.auth.signOut();
+      setMessage("Please log in at your own store's address");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      await supabase.auth.signOut();
+      setMessage("Please log in at your own store's address");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const { data: store, error: storeError } = await supabase
+      .from("stores")
+      .select("slug")
+      .eq("owner_id", user.id)
+      .maybeSingle<{ slug: string }>();
+
+    if (storeError || !store || store.slug !== expectedStoreSlug) {
+      await supabase.auth.signOut();
+      setMessage("Please log in at your own store's address");
       setIsSubmitting(false);
       return;
     }

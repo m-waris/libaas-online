@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase/server";
 import { LoginForm } from "../../components/owner/login-form";
@@ -5,6 +6,9 @@ import { LoginForm } from "../../components/owner/login-form";
 export const dynamic = "force-dynamic";
 
 export default async function LoginPage() {
+  const requestHeaders = await headers();
+  const expectedStoreSlug = requestHeaders.get("x-store-slug")?.trim() || null;
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -27,7 +31,7 @@ export default async function LoginPage() {
           </p>
         </div>
 
-        <LoginForm />
+        <LoginForm expectedStoreSlug={expectedStoreSlug} />
       </div>
     </main>
   );
