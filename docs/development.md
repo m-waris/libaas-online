@@ -10,6 +10,7 @@ The app expects:
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY` for the store creation script only
 - `TENANT_STORE_SLUG` optionally to force a tenant in local development
+- `PLATFORM_WHATSAPP_NUMBER` optionally to enable the root-domain platform contact CTA (international digits, without `+`)
 
 Never put the service-role key in a public/browser variable or client module.
 

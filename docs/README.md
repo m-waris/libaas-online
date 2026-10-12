@@ -9,6 +9,7 @@ Use this page to choose the smallest guide relevant to a task. The source code a
 | [API and workflows](api-and-workflows.md) | App routes, checkout API, cart/order flow, or request/response behavior |
 | [Supabase and data security](supabase-and-data-security.md) | Supabase clients, auth, RLS, SQL schema, migrations, or order creation |
 | [UI and components](ui-and-components.md) | Storefront/owner UI, client state, component responsibilities, or styling |
+| [Frontend design brief](frontend-design.md) | Visual direction decisions and phased design plan mapped to the current architecture |
 | [Development](development.md) | Environment setup, local tenant testing, or package scripts |
 
 For the product idea and high-level architecture, start with [PROJECT_ARCHITECTURE.md](../PROJECT_ARCHITECTURE.md). Agent workflow and documentation maintenance rules are in [AGENTS.md](../AGENTS.md).

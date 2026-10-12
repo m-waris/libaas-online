@@ -14,7 +14,10 @@ type LoginFormProps = {
   hasWrongStoreSession: boolean;
 };
 
-export function LoginForm({ expectedStoreSlug, hasWrongStoreSession }: LoginFormProps) {
+export function LoginForm({
+  expectedStoreSlug,
+  hasWrongStoreSession,
+}: LoginFormProps) {
   const router = useRouter();
   const [form, setForm] = useState<LoginFormState>({
     email: "",
@@ -102,7 +105,8 @@ export function LoginForm({ expectedStoreSlug, hasWrongStoreSession }: LoginForm
     <form className="space-y-4" onSubmit={handleSubmit}>
       {hasWrongStoreSession ? (
         <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-          This session belongs to a different store. Sign out before continuing here.
+          This session belongs to a different store. Sign out before continuing
+          here.
           <button
             type="button"
             onClick={handleSignOut}
@@ -150,7 +154,10 @@ export function LoginForm({ expectedStoreSlug, hasWrongStoreSession }: LoginForm
       </button>
 
       {message ? (
-        <p className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p
+          role="alert"
+          className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+        >
           {message}
         </p>
       ) : null}

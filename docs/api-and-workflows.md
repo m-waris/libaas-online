@@ -4,16 +4,19 @@ For the route file map, see [Project structure](project-structure.md). For how r
 
 ## Page routes
 
-| Route | Behavior |
-|---|---|
-| `/` | On root/unknown domain, renders platform introduction. On tenant subdomain, loads store and active catalog, then supports `?filter=all`, `?filter=instock`, and `?filter=outofstock`. |
-| `/products/[id]` | Loads the active product by ID within the resolved tenant, then renders its images, description, price, stock state, and variant selector. |
-| `/cart` | Loads the tenant record and renders cart contents from the browser cart context. |
-| `/checkout` | Loads the tenant record and renders customer details plus a cart preview. |
-| `/login` | Shows store-owner email/password login. If already authenticated, redirects to `/dashboard/products`. |
-| `/dashboard/products` | Requires an authenticated owner and a tenant slug matching the owner's store. Displays products and variants and supports creating them. |
+| Route                 | Behavior                                                                                                                                                                                                                                                              |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                   | On root/unknown domain, renders the Libaas Online platform landing page. On tenant subdomains, wraps the catalog in the shared store shell and supports product search via `?q=...` and stock filters via `?filter=all`, `?filter=instock`, and `?filter=outofstock`. |
+| `/products/[id]`      | Loads the active product by ID within the resolved tenant, then renders its images, description, price, stock state, and variant selector.                                                                                                                            |
+| `/cart`               | Loads the tenant record and renders cart contents from the browser cart context.                                                                                                                                                                                      |
+| `/checkout`           | Loads the tenant record and renders customer details plus a cart preview.                                                                                                                                                                                             |
+| `/login`              | Shows store-owner email/password login. If already authenticated, redirects to `/dashboard/products`.                                                                                                                                                                 |
+| `/dashboard/products` | Requires an authenticated owner and a tenant slug matching the owner's store. Displays products and variants and supports creation, stock edits, and visibility toggles.                                                                                              |
+| `/dashboard/orders`   | Requires an authenticated owner and matching tenant. Displays up to 100 recent orders with customer details and supports owner-authorized status changes.                                                                                                             |
 
-Storefront/cart/checkout/product routes are tenant-scoped. Login and dashboard behavior also depends on the tenant subdomain. The product dashboard is currently the only owner management page.
+Storefront/cart/checkout/product routes are tenant-scoped. Login and dashboard behavior also depends on the tenant subdomain. Dashboard pages verify the authenticated owner and matching tenant slug before querying. Order updates use the authenticated owner session and RLS. The UI offers pending → confirmed/cancelled, confirmed → shipped/cancelled, and shipped → delivered/cancelled. Customer WhatsApp links use the order phone and a prefilled message; opening WhatsApp does not change order state.
+
+The shared tenant header appears on catalog, product, cart, and checkout pages. Its search form submits a GET request to the tenant catalog; availability filters use `?filter=instock` and `?filter=outofstock`, with a mobile bottom sheet. Cart count hydrates from local browser storage. The platform landing can link to WhatsApp when `PLATFORM_WHATSAPP_NUMBER` is configured.
 
 ## `POST /api/checkout`
 
@@ -42,7 +45,7 @@ The API uses the public/publishable key. It does not trust the cart's displayed 
 4. Checkout posts contact details and selected variant IDs to the API.
 5. The database RPC validates and writes the order transactionally; the browser cart is cleared after successful submission.
 
-The client-side cart and order preview are convenience UI. The database RPC is authoritative for price and stock at purchase time.
+The client-side cart and order preview are convenience UI. The database RPC is authoritative for price and stock at purchase time. Checkout asks for city and full delivery address separately, then stores them together as labeled lines in the existing `customer_address` field; the API/schema contract has not changed. The displayed COD total is the item subtotal; delivery charges are not included or calculated by the current schema/API.
 
 ## Owner product workflow
 

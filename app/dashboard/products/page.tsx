@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "../../../lib/supabase/server";
 import { ProductsDashboard } from "../../../components/owner/products-dashboard";
+import { OwnerDashboardShell } from "../../../components/owner/owner-dashboard-shell";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,8 @@ type StoreRecord = {
   id: string;
   slug: string;
   name: string;
+  logo_url: string | null;
+  theme_config: Record<string, unknown> | null;
 };
 
 type ProductRecord = {
@@ -52,7 +55,7 @@ export default async function ProductsPage() {
 
   const { data: store, error: storeError } = await supabase
     .from("stores")
-    .select("id, slug, name")
+    .select("id, slug, name, logo_url, theme_config")
     .eq("owner_id", user.id)
     .maybeSingle<StoreRecord>();
 
@@ -66,7 +69,9 @@ export default async function ProductsPage() {
 
   const { data: productsData, error: productsError } = await supabase
     .from("products")
-    .select("id, name, description, base_price, is_active, created_at, updated_at")
+    .select(
+      "id, name, description, base_price, is_active, created_at, updated_at",
+    )
     .eq("store_id", store.id)
     .order("created_at", { ascending: false });
 
@@ -92,10 +97,12 @@ export default async function ProductsPage() {
   }
 
   return (
-    <ProductsDashboard
-      initialStore={store}
-      initialProducts={products}
-      initialVariants={variants}
-    />
+    <OwnerDashboardShell store={store} activePage="products">
+      <ProductsDashboard
+        initialStore={store}
+        initialProducts={products}
+        initialVariants={variants}
+      />
+    </OwnerDashboardShell>
   );
 }

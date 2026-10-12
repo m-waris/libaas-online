@@ -1,14 +1,15 @@
-import { notFound } from 'next/navigation';
-import { headers } from 'next/headers';
+import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 
-import { CartClientPage } from '../../components/storefront/cart-client-page';
-import { getStorefrontStore } from '../../lib/queries';
+import { CartClientPage } from "../../components/storefront/cart-client-page";
+import { StorefrontShell } from "../../components/storefront/storefront-shell";
+import { getStorefrontStore } from "../../lib/queries";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function CartPage() {
   const requestHeaders = await headers();
-  const storeSlug = requestHeaders.get('x-store-slug')?.trim();
+  const storeSlug = requestHeaders.get("x-store-slug")?.trim();
 
   if (!storeSlug) {
     notFound();
@@ -20,5 +21,9 @@ export default async function CartPage() {
     notFound();
   }
 
-  return <CartClientPage store={store} />;
+  return (
+    <StorefrontShell store={store}>
+      <CartClientPage store={store} />
+    </StorefrontShell>
+  );
 }

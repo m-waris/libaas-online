@@ -16,33 +16,34 @@ The current implemented customer flow is: browse a store catalog, view a product
 
 ## Current project map
 
-| Area | Location | Responsibility |
-|---|---|---|
-| App Router pages and API | [`app/`](app/) | Storefront, product detail, login, owner products dashboard, cart, checkout, checkout API |
-| Storefront UI | [`components/storefront/`](components/storefront/) | Variant selection, cart state and views, checkout form |
-| Owner UI | [`components/owner/`](components/owner/) | Login form and product/variant management dashboard |
-| Supabase clients and data access | [`lib/`](lib/) | Browser/server clients, session helper, storefront queries, shared types |
-| Tenant resolution | [`proxy.ts`](proxy.ts) | Hostname-to-store-slug resolution and tenant headers |
-| Database | [`supabase/migrations/`](supabase/migrations/) | Tables, indexes, RLS policies, checkout RPC |
-| Store onboarding | [`scripts/create-store.mjs`](scripts/create-store.mjs) | Creates an owner account and store using a server-side service key |
-| Focused documentation | [`docs/README.md`](docs/README.md) | Guide index for task-specific details |
+| Area                             | Location                                               | Responsibility                                                                                                     |
+| -------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| App Router pages and API         | [`app/`](app/)                                         | Storefront, product detail, login, owner products dashboard, cart, checkout, checkout API                          |
+| Storefront UI                    | [`components/storefront/`](components/storefront/)     | Tenant-aware shell/header, catalog filters, product gallery/variant selection, cart state and views, checkout form |
+| Owner UI                         | [`components/owner/`](components/owner/)               | Store-branded login, shared admin shell, product/inventory and order management dashboards                         |
+| Supabase clients and data access | [`lib/`](lib/)                                         | Browser/server clients, session helper, storefront queries, shared types                                           |
+| Tenant resolution                | [`proxy.ts`](proxy.ts)                                 | Hostname-to-store-slug resolution and tenant headers                                                               |
+| Database                         | [`supabase/migrations/`](supabase/migrations/)         | Tables, indexes, RLS policies, checkout RPC                                                                        |
+| Store onboarding                 | [`scripts/create-store.mjs`](scripts/create-store.mjs) | Creates an owner account and store using a server-side service key                                                 |
+| Focused documentation            | [`docs/README.md`](docs/README.md)                     | Guide index for task-specific details                                                                              |
 
 ## Routes currently implemented
 
-| Route | Purpose | Access/context |
-|---|---|---|
-| `/` | Root-domain landing page or tenant product catalog | Public; tenant catalog requires a resolved store |
-| `/products/[id]` | Product details and variant selection | Public; scoped to the resolved tenant |
-| `/cart` | Cart view | Public; cart is browser-local and scoped by current app behavior |
-| `/checkout` | Customer details and order preview | Public; requires a resolved store |
-| `/api/checkout` (`POST`) | Validates request and invokes order-creation RPC | Public endpoint; database RPC validates order data and stock |
-| `/login` | Store-owner sign-in | Public; tenant context is passed to login form |
-| `/dashboard/products` | Create/view products and variants | Owner session; verifies the signed-in user owns the tenant store |
+| Route                    | Purpose                                                             | Access/context                                                   |
+| ------------------------ | ------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `/`                      | Root-domain platform landing page or tenant product catalog/search  | Public; tenant catalog requires a resolved store                 |
+| `/products/[id]`         | Product details and variant selection                               | Public; scoped to the resolved tenant                            |
+| `/cart`                  | Cart view                                                           | Public; cart is browser-local and scoped by current app behavior |
+| `/checkout`              | Customer details and order preview                                  | Public; requires a resolved store                                |
+| `/api/checkout` (`POST`) | Validates request and invokes order-creation RPC                    | Public endpoint; database RPC validates order data and stock     |
+| `/login`                 | Store-owner sign-in                                                 | Public; tenant context is passed to login form                   |
+| `/dashboard/products`    | Create/view products and variants; quick stock and visibility edits | Owner session; verifies the signed-in user owns the tenant store |
+| `/dashboard/orders`      | View recent orders, contact customers, and update status            | Owner session; verifies the signed-in user owns the tenant store |
 
 ## Current scope and known boundaries
 
-- The product dashboard supports product and variant creation and listing. The repository does not currently provide owner order-management UI, payment processing, customer accounts, or image-upload management.
-- Product and storefront prices are formatted as NGN in the UI.
+- The owner dashboard supports order status management, customer WhatsApp contact, product/variant creation and listing, quick stock edits, and product visibility toggles. Image-upload management and store-contact settings remain unimplemented. Checkout collects the customer's city and street address separately in the UI, then stores both in the existing address text field.
+- Storefront and owner prices use PKR (`Rs`) without decimals.
 - The root domain currently renders a platform introduction, not a marketplace or superadmin dashboard.
 - Public storefront pages read safe store fields through the `storefront_stores` view; owner pages query the base table under owner-only RLS.
 - Store and owner onboarding is intended to use the server-side provisioning script. Ordinary public signup and direct store insertion are disabled in local configuration/policies.
