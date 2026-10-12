@@ -11,9 +11,10 @@ type LoginFormState = {
 
 type LoginFormProps = {
   expectedStoreSlug: string | null;
+  hasWrongStoreSession: boolean;
 };
 
-export function LoginForm({ expectedStoreSlug }: LoginFormProps) {
+export function LoginForm({ expectedStoreSlug, hasWrongStoreSession }: LoginFormProps) {
   const router = useRouter();
   const [form, setForm] = useState<LoginFormState>({
     email: "",
@@ -40,9 +41,7 @@ export function LoginForm({ expectedStoreSlug }: LoginFormProps) {
     }
 
     if (!expectedStoreSlug) {
-      await supabase.auth.signOut();
-      setMessage("Please log in at your own store's address");
-      setIsSubmitting(false);
+      await rejectCurrentSession("Please log in at your own store's address");
       return;
     }
 
@@ -52,9 +51,7 @@ export function LoginForm({ expectedStoreSlug }: LoginFormProps) {
     } = await supabase.auth.getUser();
 
     if (userError || !user) {
-      await supabase.auth.signOut();
-      setMessage("Please log in at your own store's address");
-      setIsSubmitting(false);
+      await rejectCurrentSession("Please log in at your own store's address");
       return;
     }
 
@@ -65,9 +62,7 @@ export function LoginForm({ expectedStoreSlug }: LoginFormProps) {
       .maybeSingle<{ slug: string }>();
 
     if (storeError || !store || store.slug !== expectedStoreSlug) {
-      await supabase.auth.signOut();
-      setMessage("Please log in at your own store's address");
-      setIsSubmitting(false);
+      await rejectCurrentSession("Please log in at your own store's address");
       return;
     }
 
@@ -75,8 +70,49 @@ export function LoginForm({ expectedStoreSlug }: LoginFormProps) {
     router.refresh();
   }
 
+  async function handleSignOut() {
+    setMessage(null);
+    setIsSubmitting(true);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      setMessage("Unable to clear the existing session. Please try again.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsSubmitting(false);
+    router.refresh();
+  }
+
+  async function rejectCurrentSession(rejectionMessage: string) {
+    const supabase = createClient();
+    const { error } = await supabase.auth.signOut();
+    setMessage(
+      error
+        ? "Unable to clear the existing session. Please try again."
+        : rejectionMessage,
+    );
+    setIsSubmitting(false);
+    router.refresh();
+  }
+
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
+      {hasWrongStoreSession ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          This session belongs to a different store. Sign out before continuing here.
+          <button
+            type="button"
+            onClick={handleSignOut}
+            disabled={isSubmitting}
+            className="mt-3 block font-semibold underline disabled:opacity-60"
+          >
+            Sign out of the other store
+          </button>
+        </div>
+      ) : null}
       <label className="block text-sm font-medium text-zinc-700">
         <span className="mb-2 block">Email</span>
         <input

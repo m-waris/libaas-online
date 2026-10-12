@@ -96,17 +96,17 @@ proxy.ts               # Subdomain routing
 
 ---
 
-## 🎯 Key Features (Roadmap)
+## 🎯 Current Features
 
-✅ Multi-tenant infrastructure  
-✅ Store creation (CLI)  
-✅ Product management schema  
-⬜ Admin dashboard  
-⬜ Shopping cart  
-⬜ Checkout & orders  
-⬜ Payment processing  
+- Multi-tenant routing by store subdomain, with a local tenant override
+- Store and owner onboarding through the CLI
+- Public storefront catalog, product details, and stock filters
+- Owner login and product/variant creation dashboard
+- Browser-local cart and customer checkout
+- Server-validated order creation with stock decrement through a Supabase RPC
+- Supabase RLS policies for tenant data access
 
-**[→ See full roadmap](PROJECT_ARCHITECTURE.md#-to-do--future-features)**
+Payment processing, customer accounts, owner order management, image uploads, and store customization are not currently implemented. See [PROJECT_ARCHITECTURE.md](PROJECT_ARCHITECTURE.md) for the current scope and [docs/](docs/README.md) for detailed guides.
 
 ---
 

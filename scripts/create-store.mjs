@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { createHash } from "node:crypto";
+import { randomBytes } from "node:crypto";
 import process from "node:process";
 import { createClient } from "@supabase/supabase-js";
 
@@ -109,9 +109,8 @@ function parseThemeConfig(themeJson) {
 }
 
 function generatePassword(length = 24) {
-  return createHash("sha256")
-    .update(`${Date.now()}-${Math.random().toString(36).slice(2)}`)
-    .digest("hex")
+  return randomBytes(Math.ceil(length * 0.75))
+    .toString("base64url")
     .slice(0, length);
 }
 

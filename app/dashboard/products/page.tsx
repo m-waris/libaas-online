@@ -47,21 +47,7 @@ export default async function ProductsPage() {
   }
 
   if (!expectedStoreSlug) {
-    await supabase.auth.signOut();
-
-    return (
-      <main className="min-h-screen bg-zinc-50 px-4 py-10 text-zinc-900 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
-          <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
-            Owner dashboard
-          </p>
-          <h1 className="mt-2 text-2xl font-semibold">Please log in at your own store&apos;s address</h1>
-          <p className="mt-3 text-sm leading-6 text-zinc-600">
-            Your session has been cleared because this address does not match your store&apos;s login page.
-          </p>
-        </div>
-      </main>
-    );
+    redirect("/login?tenantMismatch=1");
   }
 
   const { data: store, error: storeError } = await supabase
@@ -75,21 +61,7 @@ export default async function ProductsPage() {
   }
 
   if (!store || store.slug !== expectedStoreSlug) {
-    await supabase.auth.signOut();
-
-    return (
-      <main className="min-h-screen bg-zinc-50 px-4 py-10 text-zinc-900 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
-          <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
-            Owner dashboard
-          </p>
-          <h1 className="mt-2 text-2xl font-semibold">Please log in at your own store&apos;s address</h1>
-          <p className="mt-3 text-sm leading-6 text-zinc-600">
-            Your session has been cleared because this address does not match your store&apos;s login page.
-          </p>
-        </div>
-      </main>
-    );
+    redirect("/login?tenantMismatch=1");
   }
 
   const { data: productsData, error: productsError } = await supabase

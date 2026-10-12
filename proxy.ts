@@ -1,4 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
+import { updateSession } from "./lib/supabase/middleware";
 
 const ROOT_DOMAINS = new Set(["libaas.online", "www.libaas.online"]);
 const LOCALHOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
@@ -29,11 +30,7 @@ export function proxy(request: NextRequest) {
     );
   }
 
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  return updateSession(request, requestHeaders);
 }
 
 function resolveTenantSlug(hostname: string): string | null {

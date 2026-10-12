@@ -46,7 +46,7 @@ export async function getStorefrontStore(storeSlug: string) {
   const supabase = createSupabaseClient();
 
   const { data, error } = await supabase
-    .from('stores')
+    .from('storefront_stores')
     .select('id, slug, name, logo_url, theme_config')
     .eq('slug', storeSlug)
     .maybeSingle<StorefrontStore>();
@@ -62,7 +62,7 @@ export async function getStorefrontProducts(storeSlug: string) {
   const supabase = createSupabaseClient();
 
   const { data: store, error: storeError } = await supabase
-    .from('stores')
+    .from('storefront_stores')
     .select('id')
     .eq('slug', storeSlug)
     .maybeSingle<{ id: string }>();
@@ -133,7 +133,7 @@ export async function getStorefrontProductById(storeSlug: string, productId: str
   const supabase = createSupabaseClient();
 
   const { data: store, error: storeError } = await supabase
-    .from('stores')
+    .from('storefront_stores')
     .select('id')
     .eq('slug', storeSlug)
     .maybeSingle<{ id: string }>();

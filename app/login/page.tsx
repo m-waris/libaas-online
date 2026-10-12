@@ -14,8 +14,16 @@ export default async function LoginPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user) {
-    redirect("/dashboard/products");
+  if (user && expectedStoreSlug) {
+    const { data: store, error: storeError } = await supabase
+      .from("stores")
+      .select("slug")
+      .eq("owner_id", user.id)
+      .maybeSingle<{ slug: string }>();
+
+    if (!storeError && store?.slug === expectedStoreSlug) {
+      redirect("/dashboard/products");
+    }
   }
 
   return (
@@ -31,7 +39,10 @@ export default async function LoginPage() {
           </p>
         </div>
 
-        <LoginForm expectedStoreSlug={expectedStoreSlug} />
+        <LoginForm
+          expectedStoreSlug={expectedStoreSlug}
+          hasWrongStoreSession={Boolean(user)}
+        />
       </div>
     </main>
   );
