@@ -179,7 +179,7 @@ async function main() {
     console.log(`Login URL: ${options.baseUrl}/login`);
     console.log(`Email: ${options.email}`);
     console.log(`Temporary password: ${temporaryPassword}`);
-    console.log(`Store URL: https://${options.slug}.libaas.online`);
+    console.log(`Store URL: https://${options.slug}.libaasonline.com`);
   } catch (error) {
     await supabaseAdmin.auth.admin.deleteUser(userData.user.id);
     throw error;

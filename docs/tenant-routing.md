@@ -6,8 +6,8 @@ Tenant routing selects a store from the incoming hostname. The implementation is
 
 1. The proxy reads `host`, falling back to `x-forwarded-host`, lowercases and trims the hostname, and strips a trailing dot and numeric port.
 2. `TENANT_STORE_SLUG`, when set and non-empty, overrides hostname resolution for local development.
-3. `libaas.online` and `www.libaas.online` are treated as root domains. `localhost`, `127.0.0.1`, and `::1` have no tenant by themselves.
-4. A hostname ending in `.localhost` or `.libaas.online` resolves to the prefix as the tenant slug.
+3. `libaasonline.com`, `www.libaasonline.com`, and the Netlify site root `libaasonline.netlify.app` are treated as root domains. `localhost`, `127.0.0.1`, and `::1` have no tenant by themselves.
+4. A hostname ending in `.localhost`, `.libaasonline.com`, or `.libaasonline.netlify.app` resolves to the prefix as the tenant slug.
 5. The proxy passes `x-store-slug` and `x-tenant-mode` as request headers and calls `lib/supabase/middleware.ts` to refresh the Supabase session and propagate updated cookies. Modes currently include `override`, `subdomain`, `root-domain`, and `none`.
 
 The proxy matcher excludes Next static assets, Next image optimization, and the favicon.

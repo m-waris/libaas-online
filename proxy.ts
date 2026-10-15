@@ -1,7 +1,11 @@
 import type { NextRequest } from "next/server";
 import { updateSession } from "./lib/supabase/middleware";
 
-const ROOT_DOMAINS = new Set(["libaas.online", "www.libaas.online"]);
+const ROOT_DOMAINS = new Set([
+  "libaasonline.com",
+  "www.libaasonline.com",
+  "libaasonline.netlify.app",
+]);
 const LOCALHOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
 
 export function proxy(request: NextRequest) {
@@ -46,8 +50,12 @@ function resolveTenantSlug(hostname: string): string | null {
     return hostname.slice(0, -".localhost".length) || null;
   }
 
-  if (hostname.endsWith(".libaas.online")) {
-    return hostname.slice(0, -".libaas.online".length) || null;
+  if (hostname.endsWith(".libaasonline.com")) {
+    return hostname.slice(0, -".libaasonline.com".length) || null;
+  }
+
+  if (hostname.endsWith(".libaasonline.netlify.app")) {
+    return hostname.slice(0, -".libaasonline.netlify.app".length) || null;
   }
 
   return null;

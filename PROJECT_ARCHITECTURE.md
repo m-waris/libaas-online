@@ -2,7 +2,7 @@
 
 ## Project idea
 
-Libaas Online is a multi-tenant e-commerce application for small businesses. Each business has a storefront addressed by a store slug on a subdomain (for example, `rifah.libaas.online`). The Next.js app serves storefront and owner experiences from one codebase; Supabase provides authentication, PostgreSQL, and row-level access policies.
+Libaas Online is a multi-tenant e-commerce application for small businesses. Each business has a storefront addressed by a store slug on a subdomain (for example, `rifah.libaasonline.com`). The Next.js app serves storefront and owner experiences from one codebase; Supabase provides authentication, PostgreSQL, and row-level access policies.
 
 The current implemented customer flow is: browse a store catalog, view a product, select a variant, keep items in a browser cart, and submit an order. Store owners can sign in and create products and variants. Store onboarding is available through a CLI script.
 

@@ -1,6 +1,6 @@
 # Libaas Online
 
-A **multi-tenant e-commerce platform** enabling small businesses to create and manage online storefronts via unique subdomains (e.g., `rifah.libaas.online`).
+A **multi-tenant e-commerce platform** enabling small businesses to create and manage online storefronts via unique subdomains (e.g., `rifah.libaasonline.com`).
 
 **[→ Full Architecture & Setup Guide](PROJECT_ARCHITECTURE.md)** ← Start here for detailed documentation
 
