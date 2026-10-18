@@ -64,7 +64,7 @@ export function LoginForm({
       .from("stores")
       .select("slug, is_active")
       .eq("owner_id", user.id)
-      .maybeSingle<{ slug: string }>();
+      .maybeSingle<{ slug: string; is_active: boolean }>();
 
     if (storeError || !store || store.slug !== expectedStoreSlug) {
       await rejectCurrentSession("Please log in at your own store's address");
