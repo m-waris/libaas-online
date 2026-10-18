@@ -4,18 +4,21 @@ Use this map to locate implementation. For route behavior, see [API and workflow
 
 ## App routes
 
-| Path                  | File                              | Role                                                                         |
-| --------------------- | --------------------------------- | ---------------------------------------------------------------------------- |
-| `/`                   | `app/page.tsx`                    | Root-domain platform landing or tenant catalog with search and stock filters |
-| `/products/[id]`      | `app/products/[id]/page.tsx`      | Tenant-scoped product details and variant selector                           |
-| `/cart`               | `app/cart/page.tsx`               | Loads tenant and renders client cart                                         |
-| `/checkout`           | `app/checkout/page.tsx`           | Loads tenant and renders checkout form                                       |
-| `/api/checkout`       | `app/api/checkout/route.ts`       | POST endpoint for order submission                                           |
-| `/login`              | `app/login/page.tsx`              | Owner login page                                                             |
-| `/dashboard/products` | `app/dashboard/products/page.tsx` | Authenticated owner product, stock, and visibility dashboard                 |
-| `/dashboard/orders`   | `app/dashboard/orders/page.tsx`   | Authenticated owner orders and status management                             |
+| Path                  | File                              | Role                                                                                |
+| --------------------- | --------------------------------- | ----------------------------------------------------------------------------------- |
+| `/`                   | `app/page.tsx`                    | Root-domain redirect to admin login or tenant catalog with search and stock filters |
+| `/products/[id]`      | `app/products/[id]/page.tsx`      | Tenant-scoped product details and variant selector                                  |
+| `/cart`               | `app/cart/page.tsx`               | Loads tenant and renders client cart                                                |
+| `/checkout`           | `app/checkout/page.tsx`           | Loads tenant and renders checkout form                                              |
+| `/api/checkout`       | `app/api/checkout/route.ts`       | POST endpoint for order submission                                                  |
+| `/login`              | `app/login/page.tsx`              | Root admin login or tenant owner login                                              |
+| `/dashboard`          | `app/dashboard/page.tsx`          | Host-aware admin overview or authenticated store-owner overview                     |
+| `/dashboard/stores`   | `app/dashboard/stores/page.tsx`   | Platform admin store management                                                     |
+| `/api/auth/disabled`  | `app/api/auth/disabled/route.ts`  | Clears the owner session for a disabled store                                       |
+| `/dashboard/products` | `app/dashboard/products/page.tsx` | Authenticated owner product, stock, and visibility dashboard                        |
+| `/dashboard/orders`   | `app/dashboard/orders/page.tsx`   | Authenticated owner orders and status management                                    |
 
-`app/layout.tsx` is the root layout and wraps route content with `CartProvider`. `app/globals.css` contains global styles and the shared neutral storefront tokens. Tenant catalog, product, cart, and checkout pages use `StorefrontShell`; owner routes and the root-domain platform page stay outside that shell.
+`app/layout.tsx` is the root layout and wraps route content with `CartProvider`. `app/globals.css` contains global styles and the shared neutral storefront tokens. Tenant catalog, product, cart, and checkout pages use `StorefrontShell`; owner routes and platform administration stay outside that shell.
 
 ## Shared code
 
@@ -31,6 +34,7 @@ Use this map to locate implementation. For route behavior, see [API and workflow
 - `lib/types/index.ts`: shared type definitions; check usage before extending it.
 - `proxy.ts`: tenant hostname resolution and request context headers.
 - `scripts/create-store.mjs`: command-line store/owner bootstrap.
+- `app/admin/actions.ts`, `lib/admin-auth.ts`, `lib/supabase/admin.ts`: server-side admin auth and privileged store operations.
 - `supabase/migrations/`: schema, policies, and checkout RPC migrations.
 
 ## Where changes usually belong

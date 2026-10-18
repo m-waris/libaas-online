@@ -2,6 +2,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase/server";
 import { LoginForm } from "../../components/owner/login-form";
+import { AdminLoginForm } from "../../components/admin/admin-login-form";
+import { isAdminAuthenticated } from "../../lib/admin-auth";
 import { getStorefrontStore } from "../../lib/queries";
 import {
   getStorefrontBranding,
@@ -10,9 +12,17 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; disabled?: string }>;
+}) {
   const requestHeaders = await headers();
   const expectedStoreSlug = requestHeaders.get("x-store-slug")?.trim() || null;
+  if (!expectedStoreSlug) {
+    if (await isAdminAuthenticated()) redirect("/dashboard");
+    return <AdminLoginForm error={(await searchParams).error} />;
+  }
   const publicStore = expectedStoreSlug
     ? await getStorefrontStore(expectedStoreSlug)
     : null;
@@ -23,14 +33,23 @@ export default async function LoginPage() {
   } = await supabase.auth.getUser();
 
   if (user && expectedStoreSlug) {
+    const { data: ownedStore } = await supabase
+      .from("stores")
+      .select("is_active")
+      .eq("owner_id", user.id)
+      .maybeSingle<{ is_active: boolean }>();
+    if (ownedStore && !ownedStore.is_active) redirect("/api/auth/disabled");
+  }
+
+  if (user && expectedStoreSlug) {
     const { data: store, error: storeError } = await supabase
       .from("stores")
-      .select("slug")
+      .select("slug, is_active")
       .eq("owner_id", user.id)
-      .maybeSingle<{ slug: string }>();
+      .maybeSingle<{ slug: string; is_active: boolean }>();
 
-    if (!storeError && store?.slug === expectedStoreSlug) {
-      redirect("/dashboard/products");
+    if (!storeError && store?.slug === expectedStoreSlug && store.is_active) {
+      redirect("/dashboard");
     }
   }
 
@@ -67,6 +86,9 @@ export default async function LoginPage() {
         <LoginForm
           expectedStoreSlug={expectedStoreSlug}
           hasWrongStoreSession={Boolean(user)}
+          isDisabledStore={
+            !publicStore || (await searchParams).disabled === "1"
+          }
         />
       </div>
     </main>

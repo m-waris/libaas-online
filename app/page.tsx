@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { headers } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { StorefrontShell } from "../components/storefront/storefront-shell";
 import { CatalogFilters } from "../components/storefront/catalog-filters";
@@ -326,7 +326,7 @@ export default async function Home({ searchParams }: HomeProps) {
   const tenantMode = requestHeaders.get("x-tenant-mode")?.trim().toLowerCase();
 
   if (tenantMode === "root-domain" || tenantMode === "none") {
-    return <PlatformLandingPage />;
+    redirect("/login");
   }
 
   const storeSlug = requestHeaders.get("x-store-slug")?.trim();

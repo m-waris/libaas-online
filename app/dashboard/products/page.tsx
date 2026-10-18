@@ -12,6 +12,7 @@ type StoreRecord = {
   name: string;
   logo_url: string | null;
   theme_config: Record<string, unknown> | null;
+  is_active: boolean;
 };
 
 type ProductRecord = {
@@ -55,7 +56,7 @@ export default async function ProductsPage() {
 
   const { data: store, error: storeError } = await supabase
     .from("stores")
-    .select("id, slug, name, logo_url, theme_config")
+    .select("id, slug, name, logo_url, theme_config, is_active")
     .eq("owner_id", user.id)
     .maybeSingle<StoreRecord>();
 
@@ -66,6 +67,7 @@ export default async function ProductsPage() {
   if (!store || store.slug !== expectedStoreSlug) {
     redirect("/login?tenantMismatch=1");
   }
+  if (!store.is_active) redirect("/api/auth/disabled");
 
   const { data: productsData, error: productsError } = await supabase
     .from("products")

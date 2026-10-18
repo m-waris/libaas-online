@@ -4,19 +4,21 @@ For the route file map, see [Project structure](project-structure.md). For how r
 
 ## Page routes
 
-| Route                 | Behavior                                                                                                                                                                                                                                                              |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                   | On root/unknown domain, renders the Libaas Online platform landing page. On tenant subdomains, wraps the catalog in the shared store shell and supports product search via `?q=...` and stock filters via `?filter=all`, `?filter=instock`, and `?filter=outofstock`. |
-| `/products/[id]`      | Loads the active product by ID within the resolved tenant, then renders its images, description, price, stock state, and variant selector.                                                                                                                            |
-| `/cart`               | Loads the tenant record and renders cart contents from the browser cart context.                                                                                                                                                                                      |
-| `/checkout`           | Loads the tenant record and renders customer details plus a cart preview.                                                                                                                                                                                             |
-| `/login`              | Shows store-owner email/password login. If already authenticated, redirects to `/dashboard/products`.                                                                                                                                                                 |
-| `/dashboard/products` | Requires an authenticated owner and a tenant slug matching the owner's store. Displays products and variants and supports creation, stock edits, and visibility toggles.                                                                                              |
-| `/dashboard/orders`   | Requires an authenticated owner and matching tenant. Displays up to 100 recent orders with customer details and supports owner-authorized status changes.                                                                                                             |
+| Route                 | Behavior                                                                                                                                                                                                                                         |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/`                   | On root/unknown domain, redirects to admin sign-in. On tenant subdomains, wraps the catalog in the shared store shell and supports product search via `?q=...` and stock filters via `?filter=all`, `?filter=instock`, and `?filter=outofstock`. |
+| `/products/[id]`      | Loads the active product by ID within the resolved tenant, then renders its images, description, price, stock state, and variant selector.                                                                                                       |
+| `/cart`               | Loads the tenant record and renders cart contents from the browser cart context.                                                                                                                                                                 |
+| `/checkout`           | Loads the tenant record and renders customer details plus a cart preview.                                                                                                                                                                        |
+| `/login`              | Shows admin login on the root domain and store-owner email/password login on tenant hosts. Authenticated admins and owners go to `/dashboard`.                                                                                                   |
+| `/dashboard`          | Shows platform store totals and recent stores on the root domain; on a tenant host, shows the owner's catalog and order summary with links to products and orders.                                                                               |
+| `/dashboard/stores`   | Admin-only store list, create, edit, and enable/disable page.                                                                                                                                                                                    |
+| `/dashboard/products` | Requires an authenticated owner and a tenant slug matching the owner's store. Displays products and variants and supports creation, stock edits, and visibility toggles.                                                                         |
+| `/dashboard/orders`   | Requires an authenticated owner and matching tenant. Displays up to 100 recent orders with customer details and supports owner-authorized status changes.                                                                                        |
 
 Storefront/cart/checkout/product routes are tenant-scoped. Login and dashboard behavior also depends on the tenant subdomain. Dashboard pages verify the authenticated owner and matching tenant slug before querying. Order updates use the authenticated owner session and RLS. The UI offers pending → confirmed/cancelled, confirmed → shipped/cancelled, and shipped → delivered/cancelled. Customer WhatsApp links use the order phone and a prefilled message; opening WhatsApp does not change order state.
 
-The shared tenant header appears on catalog, product, cart, and checkout pages. Its search form submits a GET request to the tenant catalog; availability filters use `?filter=instock` and `?filter=outofstock`, with a mobile bottom sheet. Cart count hydrates from local browser storage. The platform landing can link to WhatsApp when `PLATFORM_WHATSAPP_NUMBER` is configured.
+The shared tenant header appears on catalog, product, cart, and checkout pages. Its search form submits a GET request to the tenant catalog; availability filters use `?filter=instock` and `?filter=outofstock`, with a mobile bottom sheet. Cart count hydrates from local browser storage.
 
 ## `POST /api/checkout`
 
@@ -46,6 +48,10 @@ The API uses the public/publishable key. It does not trust the cart's displayed 
 5. The database RPC validates and writes the order transactionally; the browser cart is cleared after successful submission.
 
 The client-side cart and order preview are convenience UI. The database RPC is authoritative for price and stock at purchase time. Checkout asks for city and full delivery address separately, then stores them together as labeled lines in the existing `customer_address` field; the API/schema contract has not changed. The displayed COD total is the item subtotal; delivery charges are not included or calculated by the current schema/API.
+
+## Platform admin workflow
+
+The root domain redirects to `/login`, which authenticates the configured admin email (`m.warismahmood@gmail.com`) against the server-only `ADMIN_PASSWORD`. An HttpOnly signed cookie protects `/dashboard/stores`. Server actions use the service-role client to create an owner Auth user and store, update store name/slug, and enable or disable a store. Disabled stores are omitted from public store lookup, order inserts are rejected by a database trigger, and owner dashboard access clears the session and displays a disabled-store message on login.
 
 ## Owner product workflow
 

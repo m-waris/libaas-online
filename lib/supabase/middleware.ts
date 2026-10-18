@@ -39,7 +39,30 @@ export async function updateSession(
   // Refresh the session if expired — required for Server Components to read
   // an up-to-date auth cookie. Do not add logic between createServerClient
   // and getUser().
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const tenantSlug = requestHeaders.get("x-store-slug")?.trim();
+  if (user && tenantSlug) {
+    const { data: store } = await supabase
+      .from("stores")
+      .select("is_active")
+      .eq("owner_id", user.id)
+      .eq("slug", tenantSlug)
+      .maybeSingle<{ is_active: boolean }>();
+
+    if (store && !store.is_active) {
+      await supabase.auth.signOut();
+      const redirectResponse = NextResponse.redirect(
+        new URL("/login?disabled=1", request.url),
+      );
+      supabaseResponse.cookies.getAll().forEach((cookie) =>
+        redirectResponse.cookies.set(cookie),
+      );
+      return redirectResponse;
+    }
+  }
 
   return supabaseResponse;
 }

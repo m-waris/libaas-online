@@ -14,7 +14,7 @@ The proxy matcher excludes Next static assets, Next image optimization, and the 
 
 ## Reading tenant context
 
-Server pages use `await headers()` and read `x-store-slug`. The root page additionally checks `x-tenant-mode`: root/unknown hosts get the platform landing page; tenant hosts load the store and catalog. Tenant pages should verify that the resolved store exists before rendering tenant-specific data.
+Server pages use `await headers()` and read `x-store-slug`. Root/unknown hosts use `/login` for platform admin sign-in; tenant hosts load the store and catalog. Public lookup only returns enabled stores. Tenant pages should verify that the resolved store exists before rendering tenant-specific data.
 
 The slug is a routing hint, not an authorization mechanism. Data ownership and access must be enforced by query scoping and Supabase RLS. Do not treat a client-supplied slug or ID as proof of ownership. Owner-only pages must check the authenticated user's store ownership themselves; Proxy session refresh does not authorize access.
 

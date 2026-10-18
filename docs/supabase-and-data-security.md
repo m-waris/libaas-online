@@ -16,6 +16,7 @@ This guide covers the repository's Supabase usage. Read the current migrations a
 The initial migration defines:
 
 - `stores`: tenant root, slug, branding/theme, and owner ID.
+- `stores.is_active`: platform-controlled availability flag; disabled stores are omitted from `storefront_stores`, tenant RLS helpers deny catalog/owner access, and an order insert trigger rejects orders for disabled stores.
 - `products`: store-owned catalog records with base price and active flag.
 - `product_variants`: size/color/SKU, stock count, and optional price override.
 - `product_images`: ordered product image URLs.
@@ -44,6 +45,8 @@ The checkout migrations define `public.create_order_with_items`. It is a `SECURI
 Because this function bypasses ordinary caller RLS as a security-definer routine, treat edits as security-sensitive: preserve its validation boundary, fixed `pg_catalog` search path, explicit execute grants to `anon` and `authenticated`, and transactional stock/order behavior. The hardening migration revokes default `PUBLIC` execution. Review the entire function and its migration history before changing it.
 
 Store creation is provisioned by `scripts/create-store.mjs`. The hardening migration removes direct owner store-insert policy, and local Supabase config disables signup. Apply the same signup restriction in the hosted project's Auth settings; repository config does not change an already hosted project's Auth configuration.
+
+Platform admin store creation and edits use [`lib/supabase/admin.ts`](../lib/supabase/admin.ts), which is server-only and requires `SUPABASE_SERVICE_ROLE_KEY`. Admin authentication uses an HttpOnly signed cookie derived from the server-only `ADMIN_PASSWORD`; do not expose either secret through `NEXT_PUBLIC_*` variables. The session refresh checks the owner's tenant on every request; a disabled owner is signed out and redirected to the disabled-store login notice. A later login attempt is also rejected with that message.
 
 ## Migration workflow
 

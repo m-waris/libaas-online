@@ -18,7 +18,7 @@ export function OwnerDashboardShell({
   children,
 }: {
   store: StorefrontStore;
-  activePage: "products" | "orders";
+  activePage: "dashboard" | "products" | "orders";
   children: ReactNode;
 }) {
   const router = useRouter();
@@ -48,6 +48,12 @@ export function OwnerDashboardShell({
           </div>
         </div>
         <nav className="owner-console__nav" aria-label="Store management">
+          <Link
+            href="/dashboard"
+            aria-current={activePage === "dashboard" ? "page" : undefined}
+          >
+            Overview
+          </Link>
           <Link
             href="/dashboard/products"
             aria-current={activePage === "products" ? "page" : undefined}

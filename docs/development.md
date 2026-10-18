@@ -8,11 +8,12 @@ The app expects:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY` for the store creation script only
+- `SUPABASE_SERVICE_ROLE_KEY` for server-side store provisioning and admin management
+- `ADMIN_PASSWORD` for the root-domain platform admin login (`m.warismahmood@gmail.com`)
 - `TENANT_STORE_SLUG` optionally to force a tenant in local development
 - `PLATFORM_WHATSAPP_NUMBER` optionally to enable the root-domain platform contact CTA (international digits, without `+`)
 
-Never put the service-role key in a public/browser variable or client module.
+Never put the service-role key or admin password in a public/browser variable or client module. Admin store management requires `SUPABASE_SERVICE_ROLE_KEY` at runtime.
 
 Local Supabase Auth signup is disabled because stores are provisioned through the CLI. Hosted project Auth settings are separate and must also disable public signup if onboarding is intended to remain CLI-only.
 

@@ -12,11 +12,13 @@ type LoginFormState = {
 type LoginFormProps = {
   expectedStoreSlug: string | null;
   hasWrongStoreSession: boolean;
+  isDisabledStore?: boolean;
 };
 
 export function LoginForm({
   expectedStoreSlug,
   hasWrongStoreSession,
+  isDisabledStore = false,
 }: LoginFormProps) {
   const router = useRouter();
   const [form, setForm] = useState<LoginFormState>({
@@ -60,7 +62,7 @@ export function LoginForm({
 
     const { data: store, error: storeError } = await supabase
       .from("stores")
-      .select("slug")
+      .select("slug, is_active")
       .eq("owner_id", user.id)
       .maybeSingle<{ slug: string }>();
 
@@ -69,7 +71,14 @@ export function LoginForm({
       return;
     }
 
-    router.replace("/dashboard/products");
+    if (!store.is_active) {
+      await rejectCurrentSession(
+        "Your store is disabled. Please contact Libaas Online support.",
+      );
+      return;
+    }
+
+    router.replace("/dashboard");
     router.refresh();
   }
 
@@ -116,6 +125,14 @@ export function LoginForm({
             Sign out of the other store
           </button>
         </div>
+      ) : null}
+      {isDisabledStore ? (
+        <p
+          role="alert"
+          className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+        >
+          Your store is disabled. Please contact Libaas Online support.
+        </p>
       ) : null}
       <label className="block text-sm font-medium text-zinc-700">
         <span className="mb-2 block">Email</span>

@@ -2,7 +2,7 @@
 
 The app uses Next.js App Router pages. `app/layout.tsx` wraps all route content in `CartProvider`, so cart state is available across pages in the current app.
 
-Tenant catalog, product, cart, and checkout pages are wrapped in `components/storefront/storefront-shell.tsx`. Its shared `storefront-header.tsx` provides the store logo/name, product search, and live cart count; owner routes and the root-domain platform landing do not use the storefront shell.
+Tenant catalog, product, cart, and checkout pages are wrapped in `components/storefront/storefront-shell.tsx`. Its shared `storefront-header.tsx` provides the store logo/name, product search, and live cart count; owner routes and platform admin pages do not use the storefront shell.
 
 ## Storefront components
 
@@ -25,6 +25,7 @@ Server pages load the current store and pass store/product data into client comp
 
 - `components/owner/login-form.tsx`: Supabase Auth sign-in form with tenant/store context.
 - `components/owner/owner-dashboard-shell.tsx`: lightly store-branded owner navigation and sign-out shell shared by dashboard routes.
+- `app/dashboard/page.tsx`: host-aware overview cards for platform store totals/recent stores or an owner's product and order counts with links to detailed pages.
 - `components/owner/products-dashboard.tsx`: create products and variants, list inventory, toggle storefront visibility, and edit variant stock inline.
 - `components/owner/orders-dashboard.tsx`: filter recent orders, inspect customer/order details, update allowed order statuses, and open a prefilled customer WhatsApp message.
 
@@ -33,7 +34,7 @@ Both dashboard server pages perform the server-side user and owner-store checks 
 ## Current UI conventions
 
 - Tailwind CSS utility classes are used directly in components; global design tokens and shared shell styles live in `app/globals.css`.
-- Root-domain visitors see the Libaas Online platform landing page; tenant visitors see the catalog. The platform WhatsApp CTA is shown only when `PLATFORM_WHATSAPP_NUMBER` is configured; otherwise the CTA stays on-page.
+- Root-domain visitors go to admin login and authenticated admins see the platform overview; tenant visitors see the catalog and authenticated owners see their store overview.
 - Cart state is read from `localStorage` after hydration, then persisted, so server-rendered cart counts start consistently and existing carts are not overwritten during hydration.
 - Storefront and owner prices use the shared `Rs 4,500` PKR format without decimals.
 - Cart data stores variant IDs and quantities; product names/prices/stock are resolved for display within the current tenant. Missing or inactive cart variants are pruned; load failures preserve the cart. Final prices and stock are recalculated at checkout by the database RPC.
