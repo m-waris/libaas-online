@@ -27,6 +27,7 @@ The current implemented customer flow is: browse a store catalog, view a product
 | Store onboarding                 | [`scripts/create-store.mjs`](scripts/create-store.mjs)                                                                                                     | Creates an owner account and store using a server-side service key                                                 |
 | Platform administration          | [`app/dashboard/stores/page.tsx`](app/dashboard/stores/page.tsx), [`app/admin/actions.ts`](app/admin/actions.ts), [`lib/admin-auth.ts`](lib/admin-auth.ts) | Admin login, store provisioning, and store enable/disable controls                                                 |
 | Focused documentation            | [`docs/README.md`](docs/README.md)                                                                                                                         | Guide index for task-specific details                                                                              |
+| Agent workflow                   | [`AGENTS.md`](AGENTS.md), scoped `AGENTS.md` files, [`docs/agent-workflow.md`](docs/agent-workflow.md)                                                    | Progressive task routing and documentation-maintenance rules                                                       |
 
 ## Routes currently implemented
 
@@ -63,3 +64,4 @@ Start at [`docs/README.md`](docs/README.md) and open only the guide relevant to 
 - [`docs/supabase-and-data-security.md`](docs/supabase-and-data-security.md) — clients, schema, RLS, auth, and migrations.
 - [`docs/ui-and-components.md`](docs/ui-and-components.md) — component responsibilities and UI conventions.
 - [`docs/development.md`](docs/development.md) — environment, scripts, and local tenant setup.
+- [`docs/agent-workflow.md`](docs/agent-workflow.md) — progressive agent routing and how implementation changes keep documentation current.
