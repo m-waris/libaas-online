@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ImageOff, X, ZoomIn } from "lucide-react";
 
 import { getCloudinaryImageUrl } from "../../lib/cloudinary-image";
 import type { StorefrontImage } from "../../lib/queries";
+import { AppIcon } from "../ui/app-icon";
 
 type ProductGalleryProps = {
   images: StorefrontImage[];
@@ -64,10 +66,16 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
               decoding="async"
               className="product-gallery__active-image"
             />
-            <span>Tap to zoom</span>
+            <span className="inline-flex items-center gap-1.5">
+              <AppIcon icon={ZoomIn} size={15} />
+              Tap to zoom
+            </span>
           </button>
         ) : (
-          <div className="product-gallery__empty">Photo jald aa rahi hai</div>
+          <div className="product-gallery__empty">
+            <AppIcon icon={ImageOff} size={24} />
+            Photo jald aa rahi hai
+          </div>
         )}
         {images.length > 1 ? (
           <p className="product-gallery__count" aria-live="polite">
@@ -138,7 +146,8 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
             onClick={() => setZoomed(false)}
             aria-label="Close zoom"
           >
-            Close
+            <AppIcon icon={X} size={19} />
+            <span className="sr-only">Close zoom</span>
           </button>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

@@ -12,10 +12,13 @@ The app expects:
 - `ADMIN_PASSWORD` for the root-domain platform admin login (`m.warismahmood@gmail.com`)
 - `TENANT_STORE_SLUG` optionally to force a tenant in local development
 - `PLATFORM_WHATSAPP_NUMBER` optionally to enable the root-domain platform contact CTA (international digits, without `+`)
+- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` for authenticated owner product photo uploads. Keep the API secret server-only and set all three in the deployment environment too.
 
 Never put the service-role key or admin password in a public/browser variable or client module. Admin store management requires `SUPABASE_SERVICE_ROLE_KEY` at runtime.
 
 Local Supabase Auth signup is disabled because stores are provisioned through the CLI. Hosted project Auth settings are separate and must also disable public signup if onboarding is intended to remain CLI-only.
+
+Owner product photos are resized to at most 2400×3000 pixels and encoded as WebP in the browser before upload. The server accepts only WebP uploads up to 3.8 MB, verifies the signed-in owner and current tenant product, uploads to Cloudinary under `libaas-online/<store-slug>`, and records the secure URL in `product_images` through the authenticated Supabase session. Storefront delivery uses Cloudinary automatic format and quality with width-specific 4:5 catalog crops or uncropped detail images.
 
 ## Package scripts
 

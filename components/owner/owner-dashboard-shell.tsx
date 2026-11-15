@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { LayoutDashboard, LogOut, Package, ReceiptText } from "lucide-react";
 
 import type { ReactNode } from "react";
 
@@ -11,6 +12,8 @@ import {
   getStorefrontThemeStyle,
 } from "../../lib/storefront-theme";
 import { createClient } from "../../lib/supabase/client";
+import { useToast } from "../ui/toast-provider";
+import { AppIcon } from "../ui/app-icon";
 
 export function OwnerDashboardShell({
   store,
@@ -22,10 +25,15 @@ export function OwnerDashboardShell({
   children: ReactNode;
 }) {
   const router = useRouter();
+  const { notify } = useToast();
   const { logoUrl } = getStorefrontBranding(store);
 
   async function handleSignOut() {
-    await createClient().auth.signOut();
+    const { error } = await createClient().auth.signOut();
+    notify(
+      error ? "Unable to sign out. Please try again." : "You are signed out.",
+      error ? "error" : "info",
+    );
     router.replace("/login");
     router.refresh();
   }
@@ -52,18 +60,21 @@ export function OwnerDashboardShell({
             href="/dashboard"
             aria-current={activePage === "dashboard" ? "page" : undefined}
           >
+            <AppIcon icon={LayoutDashboard} size={16} />
             Overview
           </Link>
           <Link
             href="/dashboard/products"
             aria-current={activePage === "products" ? "page" : undefined}
           >
+            <AppIcon icon={Package} size={16} />
             Products
           </Link>
           <Link
             href="/dashboard/orders"
             aria-current={activePage === "orders" ? "page" : undefined}
           >
+            <AppIcon icon={ReceiptText} size={16} />
             Orders
           </Link>
         </nav>
@@ -72,6 +83,7 @@ export function OwnerDashboardShell({
           className="owner-console__signout"
           onClick={handleSignOut}
         >
+          <AppIcon icon={LogOut} size={16} />
           Sign out
         </button>
       </header>

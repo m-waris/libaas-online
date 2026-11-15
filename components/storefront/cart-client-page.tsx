@@ -2,12 +2,25 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import {
+  ArrowRight,
+  ImageOff,
+  LoaderCircle,
+  Minus,
+  Plus,
+  RefreshCw,
+  ShoppingBag,
+  Trash2,
+  Truck,
+} from "lucide-react";
 
 import { createClient } from "@supabase/supabase-js";
 
 import { useCart } from "./cart-context";
 import { formatCurrency } from "../../lib/format-currency";
 import { getCloudinaryImageUrl } from "../../lib/cloudinary-image";
+import { useToast } from "../ui/toast-provider";
+import { AppIcon } from "../ui/app-icon";
 
 import type { StorefrontStore } from "../../lib/queries";
 
@@ -27,6 +40,7 @@ type CartClientPageProps = {
 
 export function CartClientPage({ store }: CartClientPageProps) {
   const { items, updateQuantity, removeItem, clearCart } = useCart();
+  const { notify } = useToast();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -137,12 +151,16 @@ export function CartClientPage({ store }: CartClientPageProps) {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     );
-    const { data: variant } = await supabase
+    const { data: variant, error } = await supabase
       .from("product_variants")
       .select("stock_count")
       .eq("id", item.variant_id)
       .maybeSingle<{ stock_count: number }>();
 
+    if (error) {
+      notify("Could not check stock. Please try again.", "error");
+      return;
+    }
     if (!variant || item.quantity >= variant.stock_count) {
       setCartItems((currentItems) =>
         currentItems.map((currentItem) =>
@@ -151,17 +169,35 @@ export function CartClientPage({ store }: CartClientPageProps) {
             : currentItem,
         ),
       );
+      notify(
+        variant
+          ? `Only ${variant.stock_count} available.`
+          : "This item is no longer available.",
+        "error",
+      );
       return;
     }
 
     updateQuantity(item.variant_id, item.quantity + 1);
+    notify("Cart quantity updated.", "success");
   }
 
   if (loading) {
     return (
-      <main className="storefront-page storefront-cart bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
-          <span role="status">Aap ka cart load ho raha hai…</span>
+      <main className="storefront-page storefront-cart px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
+        <div className="cart-layout">
+          <section className="cart-empty" role="status">
+            <p className="storefront-eyebrow">Your selection</p>
+            <span className="cart-empty__icon" aria-hidden="true">
+              <AppIcon
+                icon={LoaderCircle}
+                size={22}
+                className="app-icon--spin"
+              />
+            </span>
+            <h1>Loading your bag…</h1>
+            <p>Aap ka cart tayyar ho raha hai.</p>
+          </section>
         </div>
       </main>
     );
@@ -169,17 +205,24 @@ export function CartClientPage({ store }: CartClientPageProps) {
 
   if (loadError) {
     return (
-      <main className="storefront-page storefront-cart bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl rounded-2xl border border-rose-200 bg-white p-8 shadow-sm">
-          <h1 className="font-serif text-2xl">Cart load nahi ho saka.</h1>
-          <p className="mt-2 text-zinc-600">{loadError}</p>
-          <button
-            type="button"
-            onClick={() => window.location.reload()}
-            className="mt-5 min-h-11 rounded-full bg-zinc-900 px-5 text-white"
-          >
-            Dobara try karein
-          </button>
+      <main className="storefront-page storefront-cart px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
+        <div className="cart-layout">
+          <section className="cart-empty" role="alert">
+            <p className="storefront-eyebrow">Your selection</p>
+            <span className="cart-empty__icon" aria-hidden="true">
+              <AppIcon icon={RefreshCw} size={22} />
+            </span>
+            <h1>Cart load nahi ho saka.</h1>
+            <p>{loadError}</p>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="cart-primary-link"
+            >
+              <AppIcon icon={RefreshCw} size={17} />
+              Dobara try karein
+            </button>
+          </section>
         </div>
       </main>
     );
@@ -187,70 +230,68 @@ export function CartClientPage({ store }: CartClientPageProps) {
 
   if (cartItems.length === 0) {
     return (
-      <main className="storefront-page storefront-cart bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
+      <main className="storefront-page storefront-cart px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-5xl flex-col gap-6">
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
-              Cart
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold">
+          <section className="cart-empty">
+            <p className="storefront-eyebrow">Your selection</p>
+            <span className="cart-empty__icon" aria-hidden="true">
+              <AppIcon icon={ShoppingBag} size={24} />
+            </span>
+            <h1>
               {loadError ? "Cart load nahi ho saka." : "Cart khali hai yaar."}
             </h1>
-            <p className="mt-3 text-sm leading-7 text-zinc-600">
-              {loadError ?? "Kuch pasand aaye to cart mein daal dein."}
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href="/"
-                className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-white"
-              >
+            <p>{loadError ?? "Kuch pasand aaye to cart mein daal dein."}</p>
+            <div className="cart-empty__actions">
+              <Link href="/" className="cart-primary-link">
                 Products dekhein
+                <AppIcon icon={ArrowRight} size={17} />
               </Link>
             </div>
-          </div>
+          </section>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="storefront-page storefront-cart bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6">
-        <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
-                Cart
-              </p>
-              <h1 className="mt-2 text-3xl font-semibold">{store.name}</h1>
-            </div>
-            <div className="flex items-center gap-3">
-              <Link
-                href="/"
-                className="text-sm font-medium text-zinc-700 hover:text-zinc-950"
-              >
-                Shopping jari rakhein
-              </Link>
-              <button
-                type="button"
-                onClick={() => clearCart()}
-                className="text-sm font-medium text-rose-600"
-              >
-                Cart khali karein
-              </button>
-            </div>
+    <main className="storefront-page storefront-cart px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
+      <div className="cart-layout">
+        <header className="cart-heading">
+          <div>
+            <p className="storefront-eyebrow">{store.name} · Your selection</p>
+            <h1>Your bag</h1>
+            <p>
+              {cartItems.length} {cartItems.length === 1 ? "piece" : "pieces"}{" "}
+              saved for you
+            </p>
           </div>
-        </div>
+          <div className="cart-heading__actions">
+            <Link href="/" className="cart-text-link">
+              Shopping jari rakhein <AppIcon icon={ArrowRight} size={16} />
+            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                clearCart();
+                notify("Your bag has been cleared.", "info");
+              }}
+              className="cart-clear"
+            >
+              <AppIcon icon={Trash2} size={16} />
+              Clear bag
+            </button>
+          </div>
+        </header>
 
-        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="space-y-4">
+        <section
+          className="cart-columns"
+          aria-label="Cart items and order summary"
+        >
+          <div className="cart-items">
             {cartItems.map((item) => (
-              <div
-                key={item.variant_id}
-                className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm"
-              >
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="flex items-start gap-4">
+              <div key={item.variant_id} className="cart-item">
+                <div className="cart-item__top">
+                  <div className="cart-item__identity">
                     {item.image_url ? (
                       <img
                         src={getCloudinaryImageUrl(item.image_url, {
@@ -259,60 +300,56 @@ export function CartClientPage({ store }: CartClientPageProps) {
                         alt={item.product_name}
                         loading="lazy"
                         decoding="async"
-                        className="h-20 w-20 rounded-xl object-cover"
+                        className="cart-item__image"
                       />
                     ) : (
-                      <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-zinc-100 text-xs text-zinc-500">
-                        Photo nahi
+                      <div className="cart-item__image cart-item__image--empty">
+                        <AppIcon icon={ImageOff} size={20} />
+                        Image unavailable
                       </div>
                     )}
                     <div>
-                      <h2 className="text-lg font-semibold text-zinc-900">
-                        {item.product_name}
-                      </h2>
-                      <p className="mt-2 text-sm text-zinc-600">
-                        {item.option_label}
-                      </p>
-                      <p className="mt-2 text-sm text-zinc-600">
-                        Stock: {item.stock_count}
+                      <h2>{item.product_name}</h2>
+                      <p className="cart-item__option">{item.option_label}</p>
+                      <p className="cart-item__availability">
+                        {item.stock_count > 0
+                          ? `${item.stock_count} available`
+                          : "Out of stock"}
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-lg font-semibold text-zinc-900">
-                      {formatCurrency(item.unit_price * item.quantity)}
-                    </p>
-                    <p className="text-sm text-zinc-600">
-                      {formatCurrency(item.unit_price)} each
-                    </p>
+                  <div className="cart-item__price">
+                    <p>{formatCurrency(item.unit_price * item.quantity)}</p>
+                    <span>{formatCurrency(item.unit_price)} each</span>
                   </div>
                 </div>
 
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <div className="cart-item__controls">
                   {item.quantity > item.stock_count ? (
-                    <p
-                      className="w-full text-sm font-medium text-rose-700"
-                      role="alert"
-                    >
+                    <p className="cart-item__stock-error" role="alert">
                       Sirf {item.stock_count} available hain. Checkout se pehle
                       quantity update karein.
                     </p>
                   ) : null}
-                  <div className="flex items-center gap-2">
+                  <div className="cart-quantity" aria-label="Quantity">
                     <button
                       type="button"
-                      onClick={() =>
-                        updateQuantity(
-                          item.variant_id,
-                          Math.max(0, item.quantity - 1),
-                        )
-                      }
+                      onClick={() => {
+                        const quantity = Math.max(0, item.quantity - 1);
+                        updateQuantity(item.variant_id, quantity);
+                        notify(
+                          quantity
+                            ? "Cart quantity updated."
+                            : `${item.product_name} removed from your bag.`,
+                          "success",
+                        );
+                      }}
                       aria-label={`${item.product_name} quantity kam karein`}
-                      className="min-h-11 min-w-11 rounded-full border border-zinc-300 text-lg"
+                      className="cart-quantity__button"
                     >
-                      −
+                      <AppIcon icon={Minus} size={16} />
                     </button>
-                    <span className="w-8 text-center text-sm font-medium">
+                    <span className="cart-quantity__value">
                       {item.quantity}
                     </span>
                     <button
@@ -320,16 +357,23 @@ export function CartClientPage({ store }: CartClientPageProps) {
                       onClick={() => void increaseQuantity(item)}
                       disabled={item.quantity >= item.stock_count}
                       aria-label={`${item.product_name} quantity barhayein`}
-                      className="min-h-11 min-w-11 rounded-full border border-zinc-300 text-lg"
+                      className="cart-quantity__button"
                     >
-                      +
+                      <AppIcon icon={Plus} size={16} />
                     </button>
                   </div>
                   <button
                     type="button"
-                    onClick={() => removeItem(item.variant_id)}
-                    className="min-h-11 px-3 text-sm font-medium text-rose-600"
+                    onClick={() => {
+                      removeItem(item.variant_id);
+                      notify(
+                        `${item.product_name} removed from your bag.`,
+                        "success",
+                      );
+                    }}
+                    className="cart-remove"
                   >
+                    <AppIcon icon={Trash2} size={15} />
                     Remove
                   </button>
                 </div>
@@ -337,25 +381,26 @@ export function CartClientPage({ store }: CartClientPageProps) {
             ))}
           </div>
 
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
-              Summary
-            </p>
-            <div className="mt-4 flex items-center justify-between text-sm text-zinc-600">
+          <aside className="cart-summary">
+            <p className="storefront-eyebrow">Order summary</p>
+            <div className="cart-summary__line">
               <span>Subtotal</span>
-              <span className="font-medium text-zinc-900">
-                {formatCurrency(total)}
+              <strong>{formatCurrency(total)}</strong>
+            </div>
+            <div className="cart-summary__total">
+              <span className="inline-flex items-center gap-2">
+                <AppIcon icon={Truck} size={16} />
+                Cash on Delivery
               </span>
+              <strong>{formatCurrency(total)}</strong>
             </div>
-            <div className="mt-6">
-              <Link
-                href="/checkout"
-                className="block rounded-full bg-zinc-900 px-4 py-3 text-center text-sm font-medium text-white"
-              >
-                Checkout par chalein
-              </Link>
-            </div>
-          </div>
+            <p className="cart-summary__note">
+              Delivery charges seller confirm karega. Payment delivery par hogi.
+            </p>
+            <Link href="/checkout" className="cart-primary-link">
+              Continue to checkout <AppIcon icon={ArrowRight} size={17} />
+            </Link>
+          </aside>
         </section>
       </div>
     </main>

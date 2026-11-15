@@ -1,19 +1,24 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { ArrowRight, Store } from "lucide-react";
+import { AppIcon } from "../ui/app-icon";
+import { useToast } from "../ui/toast-provider";
 
 export function StoreOwnerPortalLink() {
   const [slug, setSlug] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const { notify } = useToast();
 
   function openStoreLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const normalizedSlug = slug.trim().toLowerCase();
 
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(normalizedSlug)) {
-      setError(
-        "Enter your store address, using letters, numbers, and hyphens.",
-      );
+      const message =
+        "Enter your store address, using letters, numbers, and hyphens.";
+      setError(message);
+      notify(message, "error");
       return;
     }
 
@@ -31,7 +36,9 @@ export function StoreOwnerPortalLink() {
     } else if (hostname === "libaasonline.netlify.app") {
       storeHost = `${normalizedSlug}.libaasonline.netlify.app`;
     } else {
-      setError("Open the main Libaas Online site to choose your store.");
+      const message = "Open the main Libaas Online site to choose your store.";
+      setError(message);
+      notify(message, "error");
       return;
     }
 
@@ -41,7 +48,10 @@ export function StoreOwnerPortalLink() {
   return (
     <form onSubmit={openStoreLogin} className="root-login__form">
       <label className="block text-sm font-medium text-zinc-700">
-        Store slug
+        <span className="inline-flex items-center gap-2">
+          <AppIcon icon={Store} size={16} />
+          Store slug
+        </span>
         <div className="mt-2 flex overflow-hidden rounded-xl border border-zinc-300 bg-zinc-50">
           <input
             required
@@ -71,9 +81,10 @@ export function StoreOwnerPortalLink() {
       ) : null}
       <button
         type="submit"
-        className="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-900 transition hover:bg-zinc-100"
+        className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-900 transition hover:bg-zinc-100"
       >
         Continue to store login
+        <AppIcon icon={ArrowRight} size={17} />
       </button>
     </form>
   );

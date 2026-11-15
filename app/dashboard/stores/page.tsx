@@ -1,8 +1,11 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Check, LayoutDashboard, LogOut, Plus, Store } from "lucide-react";
+import { AppIcon } from "../../../components/ui/app-icon";
 import { isAdminAuthenticated } from "../../../lib/admin-auth";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { createStore, adminLogout, updateStore } from "../../admin/actions";
+import { ToastNotice } from "../../../components/ui/toast-notice";
 
 export const dynamic = "force-dynamic";
 
@@ -42,25 +45,36 @@ export default async function StoresAdminPage({
     created: "Store created.",
     updated: "Store updated.",
   };
+  const feedbackKey = params.error ?? params.created ?? params.updated;
+  const feedback = feedbackKey ? messages[feedbackKey] : undefined;
   return (
     <main className="admin-stores-page min-h-screen bg-[#f7f5f1] px-5 py-8 text-zinc-900">
+      <ToastNotice
+        message={feedback}
+        kind={params.error ? "error" : "success"}
+      />
       <div className="mx-auto max-w-6xl">
         <header className="mb-8 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm uppercase tracking-widest text-zinc-500">
-              Libaas Online
+              <span className="inline-flex items-center gap-2">
+                <AppIcon icon={Store} size={16} />
+                Libaas Online
+              </span>
             </p>
             <h1 className="mt-1 font-serif text-3xl">Store administration</h1>
           </div>
           <div className="flex items-center gap-3">
             <Link
               href="/dashboard"
-              className="rounded-lg border border-zinc-300 px-4 py-2 text-sm"
+              className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 px-4 py-2 text-sm"
             >
+              <AppIcon icon={LayoutDashboard} size={15} />
               Dashboard
             </Link>
             <form action={adminLogout}>
-              <button className="rounded-lg border border-zinc-300 px-4 py-2 text-sm">
+              <button className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 px-4 py-2 text-sm">
+                <AppIcon icon={LogOut} size={15} />
                 Sign out
               </button>
             </form>
@@ -72,7 +86,10 @@ export default async function StoresAdminPage({
           </p>
         ) : null}
         <section className="mb-8 rounded-2xl bg-white p-6 shadow-sm">
-          <h2 className="mb-4 font-serif text-2xl">Create a store</h2>
+          <h2 className="mb-4 inline-flex items-center gap-2 font-serif text-2xl">
+            <AppIcon icon={Plus} size={20} />
+            Create a store
+          </h2>
           <form
             action={createStore}
             className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
@@ -115,13 +132,15 @@ export default async function StoresAdminPage({
                 className="mt-1 block w-full rounded-lg border p-2"
               />
             </label>
-            <button className="rounded-lg bg-zinc-900 px-4 py-2 text-sm text-white sm:col-span-2 lg:col-span-4">
+            <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm text-white sm:col-span-2 lg:col-span-4">
+              <AppIcon icon={Plus} size={17} />
               Create store and owner
             </button>
           </form>
         </section>
         <section className="rounded-2xl bg-white p-6 shadow-sm">
-          <h2 className="mb-4 font-serif text-2xl">
+          <h2 className="mb-4 inline-flex items-center gap-2 font-serif text-2xl">
+            <AppIcon icon={Store} size={20} />
             Stores{" "}
             <span className="font-sans text-base text-zinc-500">
               ({rows.length})
@@ -177,7 +196,8 @@ export default async function StoresAdminPage({
                       <option value="false">Disabled</option>
                     </select>
                   </label>
-                  <button className="rounded-lg bg-zinc-900 px-4 py-2 text-sm text-white">
+                  <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm text-white">
+                    <AppIcon icon={Check} size={15} />
                     Save
                   </button>
                 </form>

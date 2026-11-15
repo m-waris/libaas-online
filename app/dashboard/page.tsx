@@ -1,6 +1,16 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import {
+  ArrowRight,
+  CircleCheck,
+  CircleX,
+  LogOut,
+  Package,
+  ReceiptText,
+  Store,
+} from "lucide-react";
+import { AppIcon } from "../../components/ui/app-icon";
 import { OwnerDashboardShell } from "../../components/owner/owner-dashboard-shell";
 import { isAdminAuthenticated } from "../../lib/admin-auth";
 import { createClient } from "../../lib/supabase/server";
@@ -13,14 +23,19 @@ function AdminMetric({
   label,
   value,
   detail,
+  icon,
 }: {
   label: string;
   value: number;
   detail: string;
+  icon: typeof Store;
 }) {
   return (
     <article className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-zinc-500">{label}</p>
+      <div className="dashboard-metric__label">
+        <p className="text-sm font-medium text-zinc-500">{label}</p>
+        <AppIcon icon={icon} size={20} />
+      </div>
       <p className="mt-3 text-4xl font-semibold tracking-tight">{value}</p>
       <p className="mt-2 text-sm text-zinc-500">{detail}</p>
     </article>
@@ -78,12 +93,13 @@ async function AdminDashboard() {
           </div>
           <Link
             href="/dashboard/stores"
-            className="rounded-xl bg-zinc-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-zinc-700"
+            className="inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-zinc-700"
           >
-            Manage stores <span aria-hidden="true">→</span>
+            Manage stores <AppIcon icon={ArrowRight} size={16} />
           </Link>
           <form action={adminLogout}>
-            <button className="rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-medium transition hover:border-zinc-500">
+            <button className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-medium transition hover:border-zinc-500">
+              <AppIcon icon={LogOut} size={16} />
               Sign out
             </button>
           </form>
@@ -96,16 +112,19 @@ async function AdminDashboard() {
             label="All stores"
             value={total.count ?? 0}
             detail="Stores on the platform"
+            icon={Store}
           />
           <AdminMetric
             label="Enabled"
             value={active.count ?? 0}
             detail="Available to customers and owners"
+            icon={CircleCheck}
           />
           <AdminMetric
             label="Disabled"
             value={disabled.count ?? 0}
             detail="Unavailable until re-enabled"
+            icon={CircleX}
           />
         </section>
         <section className="mt-8 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
@@ -118,8 +137,9 @@ async function AdminDashboard() {
             </div>
             <Link
               href="/dashboard/stores"
-              className="text-sm font-semibold underline underline-offset-4"
+              className="inline-flex items-center gap-2 text-sm font-semibold underline underline-offset-4"
             >
+              <AppIcon icon={Store} size={15} />
               All stores
             </Link>
           </div>
@@ -222,89 +242,101 @@ async function StoreDashboard() {
 
   return (
     <OwnerDashboardShell store={store} activePage="dashboard">
-      <div className="space-y-8">
-        <section className="flex flex-wrap items-end justify-between gap-4">
+      <div className="owner-overview space-y-8">
+        <section className="owner-overview__hero">
           <div>
-            <p className="text-sm uppercase tracking-widest text-zinc-500">
-              Store overview
-            </p>
-            <h1 className="mt-1 font-serif text-4xl">
-              Welcome to {store.name}
-            </h1>
-            <p className="mt-2 text-zinc-600">Here’s how your shop is doing.</p>
+            <p className="owner-page__eyebrow">Store overview</p>
+            <h1>Welcome back, {store.name}</h1>
+            <p>Your shop at a glance. Pick up where you left off.</p>
           </div>
-          <Link
-            href="/dashboard/products"
-            className="rounded-xl bg-zinc-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-zinc-700"
-          >
-            Manage products <span aria-hidden="true">→</span>
+          <Link href="/dashboard/products" className="owner-primary-action">
+            <AppIcon icon={Package} size={17} />
+            Manage products <AppIcon icon={ArrowRight} size={17} />
           </Link>
         </section>
         <section
           aria-label="Store summary"
-          className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
+          className="owner-overview__stats grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
         >
           {[
-            ["Products", products.count ?? 0, "Across your catalog"],
-            [
-              "Published",
-              publishedProducts.count ?? 0,
-              "Visible in your store",
-            ],
-            ["Orders", orders.count ?? 0, "Orders received"],
-            ["Pending orders", pendingOrders.count ?? 0, "Need your attention"],
-          ].map(([label, value, detail]) => (
+            {
+              label: "Products",
+              value: products.count ?? 0,
+              detail: "Across your catalog",
+              icon: Package,
+            },
+            {
+              label: "Published",
+              value: publishedProducts.count ?? 0,
+              detail: "Visible in your store",
+              icon: CircleCheck,
+            },
+            {
+              label: "Orders",
+              value: orders.count ?? 0,
+              detail: "Orders received",
+              icon: ReceiptText,
+            },
+            {
+              label: "Pending orders",
+              value: pendingOrders.count ?? 0,
+              detail: "Need your attention",
+              icon: CircleX,
+            },
+          ].map((stat) => (
             <article
-              key={String(label)}
+              key={stat.label}
               className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm"
             >
-              <p className="text-sm font-medium text-zinc-500">{label}</p>
+              <div className="dashboard-metric__label">
+                <p className="text-sm font-medium text-zinc-500">
+                  {stat.label}
+                </p>
+                <AppIcon icon={stat.icon} size={20} />
+              </div>
               <p className="mt-3 text-4xl font-semibold tracking-tight">
-                {value}
+                {stat.value}
               </p>
-              <p className="mt-2 text-sm text-zinc-500">{detail}</p>
+              <p className="mt-2 text-sm text-zinc-500">{stat.detail}</p>
             </article>
           ))}
         </section>
-        <section className="grid gap-4 lg:grid-cols-2">
+        <section
+          className="owner-overview__shortcuts grid gap-4 lg:grid-cols-2"
+          aria-label="Store management shortcuts"
+        >
           <Link
             href="/dashboard/products"
             className="group rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition hover:border-zinc-400"
           >
-            <p className="text-sm font-medium text-zinc-500">CATALOG</p>
+            <p className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500">
+              <AppIcon icon={Package} size={16} />
+              CATALOG
+            </p>
             <h2 className="mt-2 font-serif text-2xl">Products and inventory</h2>
             <p className="mt-2 text-sm leading-6 text-zinc-600">
               Add products, manage variants and stock, and choose what customers
               can see.
             </p>
-            <span className="mt-5 inline-flex text-sm font-semibold">
-              Open products{" "}
-              <span
-                className="ml-2 transition group-hover:translate-x-1"
-                aria-hidden="true"
-              >
-                →
-              </span>
+            <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold">
+              Open products <AppIcon icon={ArrowRight} size={16} />
             </span>
           </Link>
           <Link
             href="/dashboard/orders"
             className="group rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition hover:border-zinc-400"
           >
-            <p className="text-sm font-medium text-zinc-500">FULFILMENT</p>
+            <p className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500">
+              <AppIcon icon={ReceiptText} size={16} />
+              FULFILMENT
+            </p>
             <h2 className="mt-2 font-serif text-2xl">Customer orders</h2>
             <p className="mt-2 text-sm leading-6 text-zinc-600">
               Review recent purchases, contact customers, and update order
               statuses.
             </p>
-            <span className="mt-5 inline-flex text-sm font-semibold">
-              Open orders{" "}
-              <span
-                className="ml-2 transition group-hover:translate-x-1"
-                aria-hidden="true"
-              >
-                →
-              </span>
+            <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold">
+              Open orders <AppIcon icon={ArrowRight} size={16} />
             </span>
           </Link>
         </section>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { CartProvider } from "../components/storefront/cart-context";
+import { ToastProvider } from "../components/ui/toast-provider";
 
 export const metadata: Metadata = {
   title: {
@@ -19,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en-PK" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
-        <CartProvider>{children}</CartProvider>
+        <ToastProvider>
+          <CartProvider>{children}</CartProvider>
+        </ToastProvider>
       </body>
     </html>
   );

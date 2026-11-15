@@ -2,7 +2,16 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import {
+  ArrowRight,
+  LockKeyhole,
+  LogOut,
+  Mail,
+  ShieldAlert,
+} from "lucide-react";
 import { createClient } from "../../lib/supabase/client";
+import { AppIcon } from "../ui/app-icon";
+import { useToast } from "../ui/toast-provider";
 
 type LoginFormState = {
   email: string;
@@ -21,6 +30,7 @@ export function LoginForm({
   isDisabledStore = false,
 }: LoginFormProps) {
   const router = useRouter();
+  const { notify } = useToast();
   const [form, setForm] = useState<LoginFormState>({
     email: "",
     password: "",
@@ -41,6 +51,7 @@ export function LoginForm({
 
     if (signInError) {
       setMessage(signInError.message);
+      notify(signInError.message, "error");
       setIsSubmitting(false);
       return;
     }
@@ -79,6 +90,7 @@ export function LoginForm({
     }
 
     router.replace("/dashboard");
+    notify("Signed in successfully.", "success");
     router.refresh();
   }
 
@@ -89,23 +101,27 @@ export function LoginForm({
     const { error } = await supabase.auth.signOut();
 
     if (error) {
-      setMessage("Unable to clear the existing session. Please try again.");
+      const errorMessage =
+        "Unable to clear the existing session. Please try again.";
+      setMessage(errorMessage);
+      notify(errorMessage, "error");
       setIsSubmitting(false);
       return;
     }
 
     setIsSubmitting(false);
+    notify("You are signed out.", "info");
     router.refresh();
   }
 
   async function rejectCurrentSession(rejectionMessage: string) {
     const supabase = createClient();
     const { error } = await supabase.auth.signOut();
-    setMessage(
-      error
-        ? "Unable to clear the existing session. Please try again."
-        : rejectionMessage,
-    );
+    const message = error
+      ? "Unable to clear the existing session. Please try again."
+      : rejectionMessage;
+    setMessage(message);
+    notify(message, "error");
     setIsSubmitting(false);
     router.refresh();
   }
@@ -113,17 +129,21 @@ export function LoginForm({
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       {hasWrongStoreSession ? (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-          This session belongs to a different store. Sign out before continuing
-          here.
-          <button
-            type="button"
-            onClick={handleSignOut}
-            disabled={isSubmitting}
-            className="mt-3 block font-semibold underline disabled:opacity-60"
-          >
-            Sign out of the other store
-          </button>
+        <div className="flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          <AppIcon icon={ShieldAlert} size={19} className="mt-0.5" />
+          <div>
+            This session belongs to a different store. Sign out before
+            continuing here.
+            <button
+              type="button"
+              onClick={handleSignOut}
+              disabled={isSubmitting}
+              className="mt-3 inline-flex min-h-11 items-center gap-2 font-semibold underline disabled:opacity-60"
+            >
+              <AppIcon icon={LogOut} size={16} />
+              Sign out of the other store
+            </button>
+          </div>
         </div>
       ) : null}
       {isDisabledStore ? (
@@ -135,7 +155,10 @@ export function LoginForm({
         </p>
       ) : null}
       <label className="block text-sm font-medium text-zinc-700">
-        <span className="mb-2 block">Email</span>
+        <span className="mb-2 inline-flex items-center gap-2">
+          <AppIcon icon={Mail} size={16} />
+          Email
+        </span>
         <input
           required
           type="email"
@@ -149,7 +172,10 @@ export function LoginForm({
       </label>
 
       <label className="block text-sm font-medium text-zinc-700">
-        <span className="mb-2 block">Password</span>
+        <span className="mb-2 inline-flex items-center gap-2">
+          <AppIcon icon={LockKeyhole} size={16} />
+          Password
+        </span>
         <input
           required
           type="password"
@@ -165,9 +191,10 @@ export function LoginForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting ? "Signing in…" : "Sign in"}
+        <AppIcon icon={ArrowRight} size={17} />
       </button>
 
       {message ? (

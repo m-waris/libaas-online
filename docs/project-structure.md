@@ -4,29 +4,31 @@ Use this map to locate implementation. For route behavior, see [API and workflow
 
 ## App routes
 
-| Path                  | File                              | Role                                                                                         |
-| --------------------- | --------------------------------- | -------------------------------------------------------------------------------------------- |
-| `/`                   | `app/page.tsx`                    | Public platform landing page on root domains or tenant catalog with search and stock filters |
-| `/products/[id]`      | `app/products/[id]/page.tsx`      | Tenant-scoped product details and variant selector                                           |
-| `/cart`               | `app/cart/page.tsx`               | Loads tenant and renders client cart                                                         |
-| `/checkout`           | `app/checkout/page.tsx`           | Loads tenant and renders checkout form                                                       |
-| `/api/checkout`       | `app/api/checkout/route.ts`       | POST endpoint for order submission                                                           |
-| `/login`              | `app/login/page.tsx`              | Root admin login and store-owner portal, or tenant owner login                               |
-| `/dashboard`          | `app/dashboard/page.tsx`          | Host-aware admin overview or authenticated store-owner overview                              |
-| `/dashboard/stores`   | `app/dashboard/stores/page.tsx`   | Platform admin store management                                                              |
-| `/api/auth/disabled`  | `app/api/auth/disabled/route.ts`  | Clears the owner session for a disabled store                                                |
-| `/dashboard/products` | `app/dashboard/products/page.tsx` | Authenticated owner product, stock, and visibility dashboard                                 |
-| `/dashboard/orders`   | `app/dashboard/orders/page.tsx`   | Authenticated owner orders and status management                                             |
+| Path                        | File                                    | Role                                                                                         |
+| --------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `/`                         | `app/page.tsx`                          | Public platform landing page on root domains or tenant catalog with search and stock filters |
+| `/products/[id]`            | `app/products/[id]/page.tsx`            | Tenant-scoped product details and variant selector                                           |
+| `/cart`                     | `app/cart/page.tsx`                     | Loads tenant and renders client cart                                                         |
+| `/checkout`                 | `app/checkout/page.tsx`                 | Loads tenant and renders checkout form                                                       |
+| `/api/checkout`             | `app/api/checkout/route.ts`             | POST endpoint for order submission                                                           |
+| `/api/owner/product-images` | `app/api/owner/product-images/route.ts` | Authenticated tenant-owner image upload and product image record creation                    |
+| `/login`                    | `app/login/page.tsx`                    | Root admin login and store-owner portal, or tenant owner login                               |
+| `/dashboard`                | `app/dashboard/page.tsx`                | Host-aware admin overview or authenticated store-owner overview                              |
+| `/dashboard/stores`         | `app/dashboard/stores/page.tsx`         | Platform admin store management                                                              |
+| `/api/auth/disabled`        | `app/api/auth/disabled/route.ts`        | Clears the owner session for a disabled store                                                |
+| `/dashboard/products`       | `app/dashboard/products/page.tsx`       | Authenticated owner product, stock, and visibility dashboard                                 |
+| `/dashboard/orders`         | `app/dashboard/orders/page.tsx`         | Authenticated owner orders and status management                                             |
 
 `app/layout.tsx` is the root layout and wraps route content with `CartProvider`. `app/globals.css` contains global styles and the shared neutral storefront tokens. Tenant catalog, product, cart, and checkout pages use `StorefrontShell`; owner routes and platform administration stay outside that shell.
 
 ## Shared code
 
-- `components/storefront/`: tenant-aware shell/header, mobile catalog filter sheet, interactive product gallery, cart context/views, variant selector, and checkout form.
+- `components/storefront/`: tenant-aware shell/header, mobile catalog filter sheet, interactive product gallery, cart context/views with responsive item/summary layout, variant selector, and checkout form.
 - `lib/cloudinary-image.ts`: Cloudinary delivery URL transformations for optimized catalog crops and product detail images; leaves other HTTPS image sources untouched.
 - `lib/format-currency.ts`: shared customer-facing PKR formatter.
-- `components/owner/`: login form, shared store-branded admin shell, product/inventory dashboard, and order-management dashboard.
-- `components/ui/`: small shared motion primitives for once-only reveals and fine-pointer tilt effects; CSS-only theme, glow, and responsive treatments remain in `app/globals.css`.
+- `components/owner/`: login form, shared store-branded admin shell, product/inventory table with create/edit/variant dialogs, and order-management dashboard.
+- `app/api/owner/product-images/route.ts`: validates tenant-owner access, signs bounded WebP uploads to Cloudinary, and writes image records through the authenticated Supabase client.
+- `components/ui/`: once-only reveal and fine-pointer tilt primitives, a shared light-stroke Lucide icon wrapper, and the app-wide success/error/info toast provider; CSS-only theme, glow, and responsive treatments remain in `app/globals.css`.
 - `lib/queries/index.ts`: public storefront store/product queries and their result types.
 - `lib/storefront-theme.ts`: validates safe public logo URLs and theme accent values for storefront rendering.
 - `lib/supabase/client.ts`: browser Supabase client.

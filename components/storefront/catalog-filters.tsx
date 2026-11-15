@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { Check, Filter, X } from "lucide-react";
+import { AppIcon } from "../ui/app-icon";
 
 type CatalogFiltersProps = { filter: string; query: string };
 
@@ -41,6 +43,7 @@ export function CatalogFilters({ filter, query }: CatalogFiltersProps) {
             aria-current={filter === option.value ? "page" : undefined}
             className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-medium transition ${filter === option.value ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-400"}`}
           >
+            {filter === option.value && <AppIcon icon={Check} size={15} />}
             {option.label}
           </Link>
         ))}
@@ -52,6 +55,7 @@ export function CatalogFilters({ filter, query }: CatalogFiltersProps) {
           className="catalog-filter-trigger"
           onClick={() => setOpen(true)}
         >
+          <AppIcon icon={Filter} size={17} />
           Filter · {options.find((option) => option.value === filter)?.label}
         </button>
         {open ? (
@@ -101,6 +105,7 @@ export function CatalogFilters({ filter, query }: CatalogFiltersProps) {
                   className="min-h-11 px-3"
                   onClick={() => setOpen(false)}
                 >
+                  <AppIcon icon={X} size={17} />
                   Band karein
                 </button>
               </div>
@@ -115,6 +120,9 @@ export function CatalogFilters({ filter, query }: CatalogFiltersProps) {
                     aria-current={filter === option.value ? "page" : undefined}
                     className={`min-h-12 rounded-xl border px-4 py-3 ${filter === option.value ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-200 bg-white"}`}
                   >
+                    {filter === option.value && (
+                      <AppIcon icon={Check} size={16} />
+                    )}
                     {option.label}
                   </Link>
                 ))}

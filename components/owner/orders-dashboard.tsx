@@ -1,8 +1,21 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import {
+  Check,
+  ChevronDown,
+  CircleCheck,
+  Clock3,
+  LoaderCircle,
+  ListOrdered,
+  MessageCircle,
+  PackageCheck,
+  X,
+} from "lucide-react";
 import { createClient } from "../../lib/supabase/client";
 import { formatCurrency } from "../../lib/format-currency";
+import { AppIcon } from "../ui/app-icon";
+import { useToast } from "../ui/toast-provider";
 
 export type OrderStatus =
   "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
@@ -66,6 +79,7 @@ export function OrdersDashboard({
   const [filter, setFilter] = useState<(typeof filters)[number]>("all");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const { notify } = useToast();
   const pendingCount = orders.filter(
     (order) => order.status === "pending",
   ).length;
@@ -90,9 +104,11 @@ export function OrdersDashboard({
       .eq("id", order.id)
       .select("id, status")
       .maybeSingle();
-    if (error || !data)
-      setMessage("Order update nahi ho saka. Dobara try karein.");
-    else
+    if (error || !data) {
+      const errorMessage = "Order update nahi ho saka. Dobara try karein.";
+      setMessage(errorMessage);
+      notify(errorMessage, "error");
+    } else {
       setOrders((current) =>
         current.map((item) =>
           item.id === order.id
@@ -100,6 +116,8 @@ export function OrdersDashboard({
             : item,
         ),
       );
+      notify(`Order marked ${labels[status].toLowerCase()}.`, "success");
+    }
     setBusyId(null);
   }
 
@@ -113,11 +131,17 @@ export function OrdersDashboard({
       <section className="owner-stats">
         <div>
           <strong>{pendingCount}</strong>
-          <span>New orders</span>
+          <span>
+            <AppIcon icon={Clock3} size={15} />
+            New orders
+          </span>
         </div>
         <div>
           <strong>{orders.length}</strong>
-          <span>Total recent orders</span>
+          <span>
+            <AppIcon icon={ListOrdered} size={15} />
+            Total recent orders
+          </span>
         </div>
       </section>
       <div
@@ -166,7 +190,10 @@ export function OrdersDashboard({
                 </div>
               </div>
               <details className="owner-order__details">
-                <summary>Order details · {order.items.length} items</summary>
+                <summary>
+                  Order details · {order.items.length} items
+                  <AppIcon icon={ChevronDown} size={16} />
+                </summary>
                 <div className="owner-order__body">
                   <p>
                     <strong>Phone:</strong> {order.customer_phone}
@@ -199,6 +226,7 @@ export function OrdersDashboard({
                     target="_blank"
                     rel="noopener noreferrer"
                   >
+                    <AppIcon icon={MessageCircle} size={16} />
                     Message customer on WhatsApp
                   </a>
                 ) : (
@@ -218,6 +246,26 @@ export function OrdersDashboard({
                     disabled={busyId === order.id}
                     onClick={() => void updateStatus(order, status)}
                   >
+                    {busyId === order.id ? (
+                      <AppIcon
+                        icon={LoaderCircle}
+                        size={16}
+                        className="app-icon--spin"
+                      />
+                    ) : (
+                      <AppIcon
+                        icon={
+                          status === "confirmed"
+                            ? Check
+                            : status === "shipped"
+                              ? PackageCheck
+                              : status === "delivered"
+                                ? CircleCheck
+                                : X
+                        }
+                        size={16}
+                      />
+                    )}
                     {busyId === order.id
                       ? "Saving…"
                       : status === "confirmed"

@@ -1,7 +1,22 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import {
+  ArrowRight,
+  CircleCheck,
+  CircleX,
+  ImageOff,
+  Link2,
+  MessageCircle,
+  Package,
+  PackageSearch,
+  PackageCheck,
+  ShoppingBag,
+  Store,
+  Truck,
+} from "lucide-react";
 
+import { AppIcon } from "../components/ui/app-icon";
 import { StorefrontShell } from "../components/storefront/storefront-shell";
 import { Reveal } from "../components/ui/reveal";
 import { TiltCard } from "../components/ui/tilt-card";
@@ -80,15 +95,17 @@ function PlatformLandingPage() {
               href={whatsAppUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-11 items-center rounded-full border border-[#d9d0c6] px-4 text-sm font-medium transition hover:border-[#25211e] sm:px-5"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#d9d0c6] px-4 text-sm font-medium transition hover:border-[#25211e] sm:px-5"
             >
+              <AppIcon icon={MessageCircle} size={16} />
               Talk to us
             </a>
           ) : (
             <a
               href="/login"
-              className="inline-flex min-h-11 items-center rounded-full border border-[#d9d0c6] px-4 text-sm font-medium transition hover:border-[#25211e] sm:px-5"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#d9d0c6] px-4 text-sm font-medium transition hover:border-[#25211e] sm:px-5"
             >
+              <AppIcon icon={Store} size={16} />
               For sellers
             </a>
           )}
@@ -127,22 +144,25 @@ function PlatformLandingPage() {
                 href={whatsAppUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="glow-surface inline-flex min-h-12 items-center justify-center rounded-full bg-[#39332e] px-6 text-sm font-semibold text-white transition hover:bg-[#554a41]"
+                className="glow-surface inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#39332e] px-6 text-sm font-semibold text-white transition hover:bg-[#554a41]"
               >
                 WhatsApp par baat karein
+                <AppIcon icon={ArrowRight} size={17} />
               </a>
             ) : (
               <a
                 href="#how-it-works"
-                className="glow-surface inline-flex min-h-12 items-center justify-center rounded-full bg-[#39332e] px-6 text-sm font-semibold text-white transition hover:bg-[#554a41]"
+                className="glow-surface inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#39332e] px-6 text-sm font-semibold text-white transition hover:bg-[#554a41]"
               >
                 See how it works
+                <AppIcon icon={ArrowRight} size={17} />
               </a>
             )}
             <Link
               href="/login"
-              className="platform-hero__owner-link inline-flex min-h-12 items-center justify-center rounded-xl border border-[#d9d0c6] px-5 text-sm font-semibold text-[#39332e] transition hover:bg-[#ebe5dd]"
+              className="platform-hero__owner-link inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#d9d0c6] px-5 text-sm font-semibold text-[#39332e] transition hover:bg-[#ebe5dd]"
             >
+              <AppIcon icon={Store} size={17} />
               Store owner login
             </Link>
           </div>
@@ -157,11 +177,11 @@ function PlatformLandingPage() {
         >
           <div
             aria-hidden="true"
-            className="absolute -right-14 -top-12 h-56 w-56 rounded-full bg-[#e6dbcf] sm:-right-10 sm:h-72 sm:w-72"
+            className="platform-hero__orb platform-hero__orb--top absolute -right-14 -top-12 h-56 w-56 rounded-full bg-[#e6dbcf] sm:-right-10 sm:h-72 sm:w-72"
           />
           <div
             aria-hidden="true"
-            className="absolute -bottom-10 -left-8 h-40 w-40 rounded-full border border-[#d8c9b8] sm:h-52 sm:w-52"
+            className="platform-hero__orb platform-hero__orb--bottom absolute -bottom-10 -left-8 h-40 w-40 rounded-full border border-[#d8c9b8] sm:h-52 sm:w-52"
           />
           <div className="platform-mockup glow-surface relative rounded-[28px] border border-[#e7e0d7] bg-white p-3 shadow-[0_28px_80px_-48px_rgba(37,33,30,0.42)] sm:rounded-[34px] sm:p-4">
             <div className="overflow-hidden rounded-[21px] bg-[#faf8f5] sm:rounded-[26px]">
@@ -179,7 +199,8 @@ function PlatformLandingPage() {
                     </p>
                   </div>
                 </div>
-                <span className="rounded-full border border-[#e7e0d7] px-3 py-2 text-xs text-[#716960]">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#e7e0d7] px-3 py-2 text-xs text-[#716960]">
+                  <AppIcon icon={ShoppingBag} size={14} />
                   Bag · 0
                 </span>
               </div>
@@ -192,8 +213,8 @@ function PlatformLandingPage() {
                 </p>
                 <div className="mt-5 grid grid-cols-2 gap-3 sm:mt-6 sm:gap-4">
                   <div>
-                    <div className="aspect-[4/5] overflow-hidden rounded-xl bg-[#e7ddd2] p-3 sm:rounded-2xl sm:p-4">
-                      <div className="flex h-full items-end rounded-lg bg-[linear-gradient(145deg,#d7c8b7_0%,#b3a08d_48%,#ede5dc_48%,#f5f1eb_100%)] p-3 sm:rounded-xl">
+                    <div className="aspect-square overflow-hidden rounded-xl bg-[#e7ddd2] p-3 sm:rounded-2xl sm:p-4">
+                      <div className="platform-look platform-look--one flex h-full items-end rounded-lg p-3 sm:rounded-xl">
                         <span className="rounded-full bg-white/80 px-2.5 py-1 text-[9px] text-[#554a41]">
                           LOOK 01
                         </span>
@@ -214,8 +235,8 @@ function PlatformLandingPage() {
                     </div>
                   </div>
                   <div className="pt-7 sm:pt-10">
-                    <div className="aspect-[4/5] overflow-hidden rounded-xl bg-[#e6e2dc] p-3 sm:rounded-2xl sm:p-4">
-                      <div className="flex h-full items-end rounded-lg bg-[linear-gradient(35deg,#a39c92_0%,#d9d3ca_50%,#eeeae3_50%,#f6f4f0_100%)] p-3 sm:rounded-xl">
+                    <div className="aspect-square overflow-hidden rounded-xl bg-[#e6e2dc] p-3 sm:rounded-2xl sm:p-4">
+                      <div className="platform-look platform-look--two flex h-full items-end rounded-lg p-3 sm:rounded-xl">
                         <span className="rounded-full bg-white/80 px-2.5 py-1 text-[9px] text-[#554a41]">
                           LOOK 02
                         </span>
@@ -239,7 +260,7 @@ function PlatformLandingPage() {
               </div>
             </div>
           </div>
-          <div className="absolute -bottom-5 left-2 rounded-2xl border border-[#e7e0d7] bg-white px-4 py-3 shadow-lg shadow-[#25211e]/5 sm:left-0 sm:px-5">
+          <div className="platform-local-badge rounded-2xl border border-[#e7e0d7] bg-white px-4 py-3 shadow-lg shadow-[#25211e]/5 sm:px-5">
             <p className="text-[10px] uppercase tracking-[0.15em] text-[#8c8278]">
               Made for local sellers
             </p>
@@ -270,18 +291,21 @@ function PlatformLandingPage() {
             {[
               {
                 number: "01",
+                icon: Link2,
                 title: "Your own store link",
                 detail:
                   "Give customers one easy link to your shop and latest collection.",
               },
               {
                 number: "02",
+                icon: PackageCheck,
                 title: "Products and sizes",
                 detail:
                   "Show clear product details, variants, prices, and availability.",
               },
               {
                 number: "03",
+                icon: Truck,
                 title: "COD ordering",
                 detail:
                   "Let shoppers place an order without needing to create an account.",
@@ -293,8 +317,8 @@ function PlatformLandingPage() {
                 delayMs={Number(feature.number) * 45}
               >
                 <article className="rounded-2xl border border-[#e7e0d7] bg-[#f7f5f1] p-5 sm:p-6">
-                  <p className="font-serif text-xl text-[#8b7663]">
-                    {feature.number}
+                  <p className="platform-feature__icon" aria-hidden="true">
+                    <AppIcon icon={feature.icon} size={20} />
                   </p>
                   <h3 className="mt-6 text-base font-semibold">
                     {feature.title}
@@ -323,16 +347,18 @@ function PlatformLandingPage() {
                 href={whatsAppUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex min-h-12 items-center justify-center self-start rounded-full bg-[#39332e] px-6 text-sm font-semibold text-white transition hover:bg-[#554a41] sm:self-auto"
+                className="inline-flex min-h-12 items-center justify-center gap-2 self-start rounded-full bg-[#39332e] px-6 text-sm font-semibold text-white transition hover:bg-[#554a41] sm:self-auto"
               >
                 WhatsApp par baat karein
+                <AppIcon icon={ArrowRight} size={17} />
               </a>
             ) : (
               <a
                 href="#features"
-                className="inline-flex min-h-12 items-center justify-center self-start rounded-full bg-[#39332e] px-6 text-sm font-semibold text-white transition hover:bg-[#554a41] sm:self-auto"
+                className="inline-flex min-h-12 items-center justify-center gap-2 self-start rounded-full bg-[#39332e] px-6 text-sm font-semibold text-white transition hover:bg-[#554a41] sm:self-auto"
               >
                 Explore the features
+                <AppIcon icon={ArrowRight} size={17} />
               </a>
             )}
           </div>
@@ -347,17 +373,23 @@ function PlatformLandingPage() {
           <h2>Everything a small fashion shop needs to start online.</h2>
           <div className="platform-benefits__grid">
             <article>
-              <span>01</span>
+              <span className="platform-benefits__icon" aria-hidden="true">
+                <AppIcon icon={Link2} size={22} />
+              </span>
               <h3>Your link</h3>
               <p>One address for your own storefront.</p>
             </article>
             <article>
-              <span>02</span>
+              <span className="platform-benefits__icon" aria-hidden="true">
+                <AppIcon icon={PackageCheck} size={22} />
+              </span>
               <h3>Your collection</h3>
               <p>Product photos, prices, sizes, and stock in one place.</p>
             </article>
             <article>
-              <span>03</span>
+              <span className="platform-benefits__icon" aria-hidden="true">
+                <AppIcon icon={Truck} size={22} />
+              </span>
               <h3>Your orders</h3>
               <p>Customers can place an order with Cash on Delivery.</p>
             </article>
@@ -429,7 +461,8 @@ export default async function Home({ searchParams }: HomeProps) {
                 Chalo, kuch acha sa dhoondte hain.
               </h1>
             </div>
-            <p className="text-sm text-zinc-500">
+            <p className="inline-flex items-center gap-2 text-sm text-zinc-500">
+              <AppIcon icon={Package} size={15} />
               {filteredProducts.length} pieces
             </p>
           </div>
@@ -472,7 +505,8 @@ export default async function Home({ searchParams }: HomeProps) {
                             className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
                           />
                         ) : (
-                          <div className="flex h-full items-end bg-[linear-gradient(145deg,#e9e1d7,#d3c4b3)] p-4 text-sm text-[#716960]">
+                          <div className="flex h-full flex-col items-start justify-end gap-2 bg-[linear-gradient(145deg,#e9e1d7,#d3c4b3)] p-4 text-sm text-[#716960]">
+                            <AppIcon icon={ImageOff} size={22} />
                             Photo jald aa rahi hai
                           </div>
                         )}
@@ -483,8 +517,12 @@ export default async function Home({ searchParams }: HomeProps) {
                             {product.name}
                           </h2>
                           <p
-                            className={`mt-1 text-sm ${inStock ? "text-zinc-500" : "font-medium text-[#76504a]"}`}
+                            className={`mt-1 inline-flex items-center gap-1.5 text-sm ${inStock ? "text-zinc-500" : "font-medium text-[#76504a]"}`}
                           >
+                            <AppIcon
+                              icon={inStock ? CircleCheck : CircleX}
+                              size={14}
+                            />
                             {inStock ? "Available" : "Sold out"}
                           </p>
                         </div>
@@ -499,6 +537,11 @@ export default async function Home({ searchParams }: HomeProps) {
             </section>
           ) : (
             <div className="rounded-2xl border border-zinc-200 bg-white px-6 py-16 text-center">
+              <AppIcon
+                icon={PackageSearch}
+                size={30}
+                className="mx-auto text-zinc-500"
+              />
               <h2 className="font-serif text-2xl">Kuch nahi mila</h2>
               <p className="mt-2 text-sm text-zinc-600">
                 Search badal kar dekhein ya tamam products browse karein.

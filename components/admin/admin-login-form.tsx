@@ -1,4 +1,6 @@
 import { adminLogin } from "../../app/admin/actions";
+import { ArrowRight, CircleAlert, LockKeyhole, Mail } from "lucide-react";
+import { AppIcon } from "../ui/app-icon";
 
 export function AdminLoginForm({ error }: { error?: string }) {
   return (
@@ -6,17 +8,27 @@ export function AdminLoginForm({ error }: { error?: string }) {
       <p className="root-login__card-label">Platform administration</p>
       <h2 id="admin-login-title">Admin sign in</h2>
       {error ? (
-        <p role="alert" className="root-login__error">
+        <p
+          role="alert"
+          className="root-login__error inline-flex items-center gap-2"
+        >
+          <AppIcon icon={CircleAlert} size={18} />
           Email or password is incorrect.
         </p>
       ) : null}
       <form action={adminLogin} className="root-login__form">
         <label>
-          Email
+          <span className="inline-flex items-center gap-2">
+            <AppIcon icon={Mail} size={16} />
+            Email
+          </span>
           <input required type="email" name="email" autoComplete="username" />
         </label>
         <label>
-          Password
+          <span className="inline-flex items-center gap-2">
+            <AppIcon icon={LockKeyhole} size={16} />
+            Password
+          </span>
           <input
             required
             type="password"
@@ -24,7 +36,9 @@ export function AdminLoginForm({ error }: { error?: string }) {
             autoComplete="current-password"
           />
         </label>
-        <button type="submit">Sign in</button>
+        <button type="submit">
+          Sign in <AppIcon icon={ArrowRight} size={17} />
+        </button>
       </form>
     </section>
   );

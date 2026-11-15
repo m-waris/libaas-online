@@ -35,6 +35,13 @@ type VariantRecord = {
   sku: string;
 };
 
+type ProductImageRecord = {
+  id: string;
+  product_id: string;
+  url: string;
+  sort_order: number;
+};
+
 export default async function ProductsPage() {
   const requestHeaders = await headers();
   const expectedStoreSlug = requestHeaders.get("x-store-slug")?.trim() || null;
@@ -85,17 +92,30 @@ export default async function ProductsPage() {
   const productIds = products.map((product) => product.id);
 
   let variants: VariantRecord[] = [];
+  let images: ProductImageRecord[] = [];
 
   if (productIds.length > 0) {
-    const { data: variantsData, error: variantsError } = await supabase
-      .from("product_variants")
-      .select("id, product_id, size, color, stock_count, price_override, sku")
-      .in("product_id", productIds)
-      .order("sku", { ascending: true });
+    const [variantsResult, imagesResult] = await Promise.all([
+      supabase
+        .from("product_variants")
+        .select("id, product_id, size, color, stock_count, price_override, sku")
+        .in("product_id", productIds)
+        .order("sku", { ascending: true }),
+      supabase
+        .from("product_images")
+        .select("id, product_id, url, sort_order")
+        .in("product_id", productIds)
+        .order("sort_order", { ascending: true }),
+    ]);
 
-    if (!variantsError) {
-      variants = (variantsData ?? []) as VariantRecord[];
+    if (variantsResult.error) {
+      throw new Error("Unable to load product variants for your store.");
     }
+    if (imagesResult.error) {
+      throw new Error("Unable to load product photos for your store.");
+    }
+    variants = (variantsResult.data ?? []) as VariantRecord[];
+    images = (imagesResult.data ?? []) as ProductImageRecord[];
   }
 
   return (
@@ -104,6 +124,7 @@ export default async function ProductsPage() {
         initialStore={store}
         initialProducts={products}
         initialVariants={variants}
+        initialImages={images}
       />
     </OwnerDashboardShell>
   );

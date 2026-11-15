@@ -264,3 +264,6 @@ The landing navigation now fits at 360px; the hero type scale and mobile spacing
 ### Change log
 
 - 2026-11-15: Added the shared warm-neutral token and motion system, responsive landing and login compositions, capability-gated reveal/tilt interactions, storefront and owner visual refinements, and documented the unauthenticated local baseline limitation. No new dependencies or data/auth/API changes.
+- 2026-11-15: Replaced the platform mockup's abstract product placeholders with a locally served, optimized two-look fashion diptych cropped into the existing square tiles.
+- 2026-11-15: Reworked owner products into a responsive detail table with image/price/variant/stock and row actions, added product edit plus modal create/variant flows, refreshed the owner overview, and redesigned cart and checkout hierarchy while preserving their existing data flows.
+- 2026-11-16: Added a shared top-center pill toast for shopping, checkout, owner product/inventory/order actions, sign-in/out feedback, and platform store create/update results. Success, info, and error states are announced to assistive technology; entrance motion respects reduced motion.

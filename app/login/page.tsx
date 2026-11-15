@@ -5,6 +5,8 @@ import { LoginForm } from "../../components/owner/login-form";
 import { RootLoginPanel } from "../../components/admin/root-login-panel";
 import { isAdminAuthenticated } from "../../lib/admin-auth";
 import { getStorefrontStore } from "../../lib/queries";
+import { Store } from "lucide-react";
+import { AppIcon } from "../../components/ui/app-icon";
 import {
   getStorefrontBranding,
   getStorefrontThemeStyle,
@@ -15,13 +17,23 @@ export const dynamic = "force-dynamic";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; disabled?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    disabled?: string;
+    signedOut?: string;
+  }>;
 }) {
   const requestHeaders = await headers();
   const expectedStoreSlug = requestHeaders.get("x-store-slug")?.trim() || null;
   if (!expectedStoreSlug) {
     if (await isAdminAuthenticated()) redirect("/dashboard");
-    return <RootLoginPanel error={(await searchParams).error} />;
+    const params = await searchParams;
+    return (
+      <RootLoginPanel
+        error={params.error}
+        signedOut={params.signedOut === "1"}
+      />
+    );
   }
   const publicStore = expectedStoreSlug
     ? await getStorefrontStore(expectedStoreSlug)
@@ -72,7 +84,10 @@ export default async function LoginPage({
               {publicStore?.name.slice(0, 1).toUpperCase() ?? "L"}
             </span>
           )}
-          <p className="owner-login__eyebrow">Store owner access</p>
+          <p className="owner-login__eyebrow inline-flex items-center gap-2">
+            <AppIcon icon={Store} size={15} />
+            Store owner access
+          </p>
         </div>
         <h1 className="font-serif text-3xl font-semibold">
           {publicStore

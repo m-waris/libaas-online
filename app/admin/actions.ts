@@ -20,7 +20,7 @@ export async function adminLogin(formData: FormData) {
 
 export async function adminLogout() {
   await signOutAdmin();
-  redirect("/login");
+  redirect("/login?signedOut=1");
 }
 
 export async function createStore(formData: FormData) {

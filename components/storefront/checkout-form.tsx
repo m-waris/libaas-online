@@ -2,11 +2,24 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import {
+  ArrowRight,
+  CheckCircle2,
+  LoaderCircle,
+  MapPin,
+  PackageCheck,
+  Phone,
+  StickyNote,
+  Truck,
+  UserRound,
+} from "lucide-react";
 
 import { createClient } from "@supabase/supabase-js";
 
 import { useCart } from "./cart-context";
+import { AppIcon } from "../ui/app-icon";
 import { formatCurrency } from "../../lib/format-currency";
+import { useToast } from "../ui/toast-provider";
 
 import type { StorefrontStore } from "../../lib/queries";
 
@@ -43,6 +56,7 @@ type Confirmation = {
 
 export function CheckoutForm({ store }: CheckoutFormProps) {
   const { items, clearCart, removeItem } = useCart();
+  const { notify } = useToast();
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerCity, setCustomerCity] = useState("");
@@ -152,15 +166,18 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
       !customerCity.trim() ||
       !customerAddress.trim()
     ) {
-      setError("Naam, city aur delivery address zaroor likhein.");
+      const validationError = "Naam, city aur delivery address zaroor likhein.";
+      setError(validationError);
+      notify(validationError, "error");
       return;
     }
     const phoneDigits = customerPhone.replace(/\D/g, "");
     if (!/^(03\d{9}|923\d{9}|00923\d{9})$/.test(phoneDigits)) {
       setPhoneTouched(true);
-      setError(
-        "Number thora ghalat lag raha hai. 03XX-XXXXXXX ya +92 format mein likhein.",
-      );
+      const validationError =
+        "Number thora ghalat lag raha hai. 03XX-XXXXXXX ya +92 format mein likhein.";
+      setError(validationError);
+      notify(validationError, "error");
       return;
     }
     setLoading(true);
@@ -214,12 +231,14 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
           },
         ),
       });
+      notify("Order confirmed. Pay on delivery.", "success");
     } catch (submitError) {
-      setError(
+      const message =
         submitError instanceof Error
           ? submitError.message
-          : "Order abhi place nahi ho saka. Dobara try karein.",
-      );
+          : "Order abhi place nahi ho saka. Dobara try karein.";
+      setError(message);
+      notify(message, "error");
     } finally {
       setLoading(false);
     }
@@ -229,11 +248,12 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
     return (
       <div className="space-y-6">
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6">
-          <p className="text-sm font-medium uppercase tracking-[0.2em] text-emerald-700">
+          <p className="inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.2em] text-emerald-700">
+            <AppIcon icon={CheckCircle2} size={17} />
             Order confirm ho gaya
           </p>
           <h2 className="mt-2 text-3xl font-semibold text-zinc-900">
-            Order place ho gaya! 🎉
+            Order place ho gaya!
           </h2>
           <p className="mt-3 text-sm text-zinc-700">
             Aap ka Cash on Delivery order submit ho gaya.
@@ -250,7 +270,10 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
         </div>
 
         <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-semibold">Order details</h2>
+          <h2 className="inline-flex items-center gap-2 text-xl font-semibold">
+            <AppIcon icon={PackageCheck} size={19} />
+            Order details
+          </h2>
           <div className="mt-4 space-y-2 text-sm text-zinc-700">
             <p>Aap: {confirmation.order.customer_name}</p>
             <p>Phone: {confirmation.order.customer_phone}</p>
@@ -286,9 +309,10 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
     <div className="checkout-form-layout grid gap-6 lg:grid-cols-[1fr_0.9fr]">
       {loadingCart ? (
         <div
-          className="rounded-2xl border border-zinc-200 bg-white p-6"
+          className="inline-flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white p-6"
           role="status"
         >
+          <AppIcon icon={LoaderCircle} size={19} className="app-icon--spin" />
           Aap ka order summary load ho raha hai…
         </div>
       ) : cartLoadError ? (
@@ -299,6 +323,7 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
             href="/cart"
             className="mt-5 inline-flex min-h-11 items-center rounded-full bg-zinc-900 px-5 text-white"
           >
+            <AppIcon icon={ArrowRight} size={17} />
             Cart par wapas jayein
           </Link>
         </div>
@@ -312,6 +337,7 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
             href="/"
             className="mt-5 inline-flex min-h-11 items-center rounded-full bg-zinc-900 px-5 text-white"
           >
+            <AppIcon icon={ArrowRight} size={17} />
             Products dekhein
           </Link>
         </div>
@@ -322,9 +348,23 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
             onSubmit={handleSubmit}
             className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
           >
+            <div className="checkout-form__heading">
+              <p className="storefront-eyebrow inline-flex items-center gap-2">
+                <AppIcon icon={Truck} size={16} />
+                Step 2 · Delivery
+              </p>
+              <h2>Where should we send it?</h2>
+              <p>
+                Share your contact and address to place this Cash on Delivery
+                order.
+              </p>
+            </div>
             <div className="space-y-4">
               <label className="block text-base font-medium text-zinc-700">
-                <span className="mb-2 block">Aap ka naam</span>
+                <span className="mb-2 inline-flex items-center gap-2">
+                  <AppIcon icon={UserRound} size={16} />
+                  Aap ka naam
+                </span>
                 <input
                   required
                   autoComplete="name"
@@ -336,7 +376,10 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
               </label>
 
               <label className="block text-base font-medium text-zinc-700">
-                <span className="mb-2 block">WhatsApp ya phone number</span>
+                <span className="mb-2 inline-flex items-center gap-2">
+                  <AppIcon icon={Phone} size={16} />
+                  WhatsApp ya phone number
+                </span>
                 <input
                   required
                   type="tel"
@@ -378,7 +421,10 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
               </label>
 
               <label className="block text-base font-medium text-zinc-700">
-                <span className="mb-2 block">Aap kahan se hain? (City)</span>
+                <span className="mb-2 inline-flex items-center gap-2">
+                  <AppIcon icon={MapPin} size={16} />
+                  Aap kahan se hain? (City)
+                </span>
                 <input
                   required
                   autoComplete="address-level2"
@@ -390,7 +436,8 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
               </label>
 
               <label className="block text-base font-medium text-zinc-700">
-                <span className="mb-2 block">
+                <span className="mb-2 inline-flex items-center gap-2">
+                  <AppIcon icon={MapPin} size={16} />
                   Delivery kahan karni hai? (Full address)
                 </span>
                 <textarea
@@ -405,7 +452,8 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
               </label>
 
               <label className="block text-base font-medium text-zinc-700">
-                <span className="mb-2 block">
+                <span className="mb-2 inline-flex items-center gap-2">
+                  <AppIcon icon={StickyNote} size={16} />
                   Order ke liye koi note? (Optional)
                 </span>
                 <textarea
@@ -430,15 +478,30 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
             <button
               type="submit"
               disabled={loading || cartItems.length === 0}
-              className="mt-6 w-full rounded-full bg-zinc-900 px-4 py-3 text-base font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-400"
+              className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-zinc-900 px-4 py-3 text-base font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-400"
             >
-              {loading ? "Order place ho raha hai…" : "Order confirm karein"}
+              {loading ? (
+                <>
+                  <AppIcon
+                    icon={LoaderCircle}
+                    size={17}
+                    className="app-icon--spin"
+                  />
+                  Order place ho raha hai…
+                </>
+              ) : (
+                <>
+                  Order confirm karein
+                  <AppIcon icon={ArrowRight} size={17} />
+                </>
+              )}
             </button>
           </form>
 
           <div className="checkout-summary rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
-              Aap ka order
+            <p className="storefront-eyebrow inline-flex items-center gap-2">
+              <AppIcon icon={PackageCheck} size={16} />
+              Your order
             </p>
             <div className="mt-4 space-y-3">
               {cartItems.map((item) => (
@@ -461,7 +524,10 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
               ))}
             </div>
             <div className="mt-6 flex items-center justify-between border-t border-zinc-200 pt-4 text-sm">
-              <span className="text-zinc-600">Cash on Delivery total</span>
+              <span className="inline-flex items-center gap-2 text-zinc-600">
+                <AppIcon icon={Truck} size={16} />
+                Cash on Delivery total
+              </span>
               <span className="text-lg font-semibold text-zinc-900">
                 {formatCurrency(total)}
               </span>
@@ -473,11 +539,33 @@ export function CheckoutForm({ store }: CheckoutFormProps) {
           </div>
           <div className="checkout-sticky">
             <div>
-              <span>COD total</span>
+              <span className="inline-flex items-center gap-2">
+                <AppIcon icon={Truck} size={16} />
+                COD total
+              </span>
               <strong>{formatCurrency(total)}</strong>
             </div>
-            <button type="submit" form="guest-checkout" disabled={loading}>
-              {loading ? "Order ho raha hai…" : "Order confirm karein"}
+            <button
+              type="submit"
+              form="guest-checkout"
+              disabled={loading}
+              className="inline-flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <AppIcon
+                    icon={LoaderCircle}
+                    size={17}
+                    className="app-icon--spin"
+                  />
+                  Order ho raha hai…
+                </>
+              ) : (
+                <>
+                  Order confirm karein
+                  <AppIcon icon={ArrowRight} size={17} />
+                </>
+              )}
             </button>
           </div>
         </>

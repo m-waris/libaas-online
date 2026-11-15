@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Search, ShoppingBag } from "lucide-react";
 
+import { AppIcon } from "../ui/app-icon";
 import { useCart } from "./cart-context";
 import type { StorefrontStore } from "../../lib/queries";
 
@@ -53,21 +55,7 @@ export function StorefrontHeader({
           role="search"
           className="storefront-search"
         >
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <circle
-              cx="10.8"
-              cy="10.8"
-              r="6.8"
-              stroke="currentColor"
-              strokeWidth="1.7"
-            />
-            <path
-              d="m16 16 4 4"
-              stroke="currentColor"
-              strokeWidth="1.7"
-              strokeLinecap="round"
-            />
-          </svg>
+          <AppIcon icon={Search} size={18} />
           <input
             type="search"
             name="q"
@@ -82,19 +70,7 @@ export function StorefrontHeader({
           className="storefront-cart-link"
           aria-label={`Cart, ${itemCount} ${itemCount === 1 ? "item" : "items"}`}
         >
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path
-              d="M4.5 8h15l-1.2 12h-12L4.5 8Z"
-              stroke="currentColor"
-              strokeWidth="1.6"
-            />
-            <path
-              d="M9 9V6a3 3 0 0 1 6 0v3"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-            />
-          </svg>
+          <AppIcon icon={ShoppingBag} size={19} />
           <span className="storefront-cart-link__label">Cart</span>
           {itemCount > 0 ? (
             <span key={itemCount} className="storefront-cart-link__count">

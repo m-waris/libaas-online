@@ -1,9 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CircleCheck, CircleX, ShoppingBag } from "lucide-react";
 
 import type { StorefrontProduct, StorefrontVariant } from "../../lib/queries";
 import { formatCurrency } from "../../lib/format-currency";
+import { useToast } from "../ui/toast-provider";
+import { AppIcon } from "../ui/app-icon";
 import { useCart } from "./cart-context";
 
 type ProductVariantSelectorProps = {
@@ -40,6 +43,7 @@ export function ProductVariantSelector({
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState<string | null>(null);
   const { addItem } = useCart();
+  const { notify } = useToast();
 
   const selectedVariant = useMemo(() => {
     if (variants.length === 0) {
@@ -75,19 +79,22 @@ export function ProductVariantSelector({
 
   function handleAddToCart() {
     if (!selectedVariant) {
-      setMessage("Choose an available variant first.");
+      const error = "Choose an available variant first.";
+      setMessage(error);
+      notify(error, "error");
       return;
     }
 
     if (!canAdd) {
-      setMessage(
-        `Only ${selectedVariant.stock_count} item${selectedVariant.stock_count === 1 ? "" : "s"} available.`,
-      );
+      const error = `Only ${selectedVariant.stock_count} item${selectedVariant.stock_count === 1 ? "" : "s"} available.`;
+      setMessage(error);
+      notify(error, "error");
       return;
     }
 
     addItem(selectedVariant.id, quantity);
     setMessage("Added to cart.");
+    notify(`${product.name} added to your bag.`, "success");
   }
 
   return (
@@ -104,7 +111,10 @@ export function ProductVariantSelector({
         <div
           className={`rounded-full px-3 py-1 text-sm font-medium ${inStock ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"}`}
         >
-          {inStock ? "Available" : "Sold out"}
+          <span className="inline-flex items-center gap-1.5">
+            <AppIcon icon={inStock ? CircleCheck : CircleX} size={15} />
+            {inStock ? "Available" : "Sold out"}
+          </span>
         </div>
       </div>
 
@@ -190,6 +200,7 @@ export function ProductVariantSelector({
                 disabled={!canAdd}
                 className="glow-surface mt-4 w-full rounded-full bg-zinc-900 px-4 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-400"
               >
+                <AppIcon icon={ShoppingBag} size={17} />
                 {inStock ? "Cart mein daalo" : "Sold out"}
               </button>
               {message ? (
@@ -212,6 +223,7 @@ export function ProductVariantSelector({
           disabled={!canAdd}
           className="glow-surface product-purchase__sticky"
         >
+          <AppIcon icon={ShoppingBag} size={17} />
           {inStock ? `Cart mein daalo · ${formatCurrency(price)}` : "Sold out"}
         </button>
       ) : null}

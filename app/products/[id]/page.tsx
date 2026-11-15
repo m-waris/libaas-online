@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 
 import { ProductVariantSelector } from "../../../components/storefront/product-variant-selector";
 import { ProductGallery } from "../../../components/storefront/product-gallery";
 import { StorefrontShell } from "../../../components/storefront/storefront-shell";
+import { AppIcon } from "../../../components/ui/app-icon";
 import { formatCurrency } from "../../../lib/format-currency";
 import {
   getStorefrontProductById,
@@ -49,7 +51,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
             href="/"
             className="inline-flex min-h-11 w-fit items-center text-sm font-medium text-zinc-600 hover:text-zinc-950"
           >
-            ← Wapas collection par
+            <AppIcon icon={ArrowLeft} size={16} />
+            Wapas collection par
           </Link>
 
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">

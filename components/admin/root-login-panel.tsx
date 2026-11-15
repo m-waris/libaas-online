@@ -2,14 +2,30 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { ArrowLeft, ShieldCheck, Store } from "lucide-react";
+import { AppIcon } from "../ui/app-icon";
 import { AdminLoginForm } from "./admin-login-form";
 import { StoreOwnerPortalLink } from "../owner/store-owner-portal-link";
+import { ToastNotice } from "../ui/toast-notice";
 
-export function RootLoginPanel({ error }: { error?: string }) {
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
+export function RootLoginPanel({
+  error,
+  signedOut = false,
+}: {
+  error?: string;
+  signedOut?: boolean;
+}) {
+  const [showAdminLogin, setShowAdminLogin] = useState(error === "admin");
+  const errorMessage =
+    error === "admin" ? "Email or password is incorrect." : null;
 
   return (
     <main className="root-login">
+      <ToastNotice message={errorMessage ?? undefined} kind="error" />
+      <ToastNotice
+        message={signedOut ? "You are signed out." : undefined}
+        kind="info"
+      />
       <div className="root-login__layout">
         <aside className="root-login__aside">
           <Link href="/" className="root-login__wordmark">
@@ -41,6 +57,7 @@ export function RootLoginPanel({ error }: { error?: string }) {
               aria-pressed={!showAdminLogin}
               onClick={() => setShowAdminLogin(false)}
             >
+              <AppIcon icon={Store} size={16} />
               Store owner
             </button>
             <button
@@ -48,6 +65,7 @@ export function RootLoginPanel({ error }: { error?: string }) {
               aria-pressed={showAdminLogin}
               onClick={() => setShowAdminLogin(true)}
             >
+              <AppIcon icon={ShieldCheck} size={16} />
               Platform admin
             </button>
           </div>
@@ -66,7 +84,8 @@ export function RootLoginPanel({ error }: { error?: string }) {
           )}
 
           <Link href="/" className="root-login__back">
-            ← Back to home
+            <AppIcon icon={ArrowLeft} size={16} />
+            Back to home
           </Link>
         </section>
       </div>
