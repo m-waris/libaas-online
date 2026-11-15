@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { headers } from "next/headers";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import { StorefrontShell } from "../components/storefront/storefront-shell";
+import { Reveal } from "../components/ui/reveal";
+import { TiltCard } from "../components/ui/tilt-card";
 import { CatalogFilters } from "../components/storefront/catalog-filters";
 import { getCloudinaryImageUrl } from "../lib/cloudinary-image";
 import { formatCurrency } from "../lib/format-currency";
@@ -55,7 +57,7 @@ function PlatformLandingPage() {
   const whatsAppUrl = getPlatformWhatsAppUrl();
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#f7f5f1] text-[#25211e]">
+    <main className="platform-page min-h-screen overflow-hidden bg-[#f7f5f1] text-[#25211e]">
       <header className="mx-auto flex w-[min(100%-32px,1280px)] items-center justify-between py-5 sm:py-7">
         <Link
           href="/"
@@ -69,7 +71,7 @@ function PlatformLandingPage() {
         >
           <a
             href="#how-it-works"
-            className="hidden min-h-11 items-center text-sm text-[#716960] transition hover:text-[#25211e] sm:inline-flex"
+            className="inline-flex min-h-11 items-center text-sm text-[#716960] transition hover:text-[#25211e]"
           >
             How it works
           </a>
@@ -84,7 +86,7 @@ function PlatformLandingPage() {
             </a>
           ) : (
             <a
-              href="#how-it-works"
+              href="/login"
               className="inline-flex min-h-11 items-center rounded-full border border-[#d9d0c6] px-4 text-sm font-medium transition hover:border-[#25211e] sm:px-5"
             >
               For sellers
@@ -93,46 +95,66 @@ function PlatformLandingPage() {
         </nav>
       </header>
 
-      <section className="mx-auto grid w-[min(100%-32px,1280px)] items-center gap-12 pb-20 pt-12 sm:pb-28 sm:pt-16 lg:min-h-[680px] lg:grid-cols-[1.04fr_0.96fr] lg:gap-16 lg:py-16">
+      <section className="platform-hero mx-auto grid w-[min(100%-32px,1280px)] items-center gap-12 pb-20 pt-12 sm:pb-28 sm:pt-16 lg:min-h-[680px] lg:grid-cols-[1.04fr_0.96fr] lg:gap-16 lg:py-16">
         <div className="relative z-10 max-w-2xl">
           <p className="mb-6 text-xs font-semibold uppercase tracking-[0.24em] text-[#837263] sm:text-sm">
             For independent fashion sellers in Pakistan
           </p>
-          <h1 className="font-serif text-[clamp(3.3rem,8vw,6.5rem)] leading-[0.94] tracking-[-0.055em]">
-            Your shop,
-            <br />
-            dressed for
-            <br />
-            <span className="text-[#8b7663]">the internet.</span>
+          <h1
+            aria-label="Your shop, dressed for the internet."
+            className="font-serif text-[clamp(3.3rem,8vw,6.5rem)] leading-[0.94] tracking-[-0.055em]"
+          >
+            <span className="platform-hero__line" aria-hidden="true">
+              Your shop,
+            </span>
+            <span className="platform-hero__line" aria-hidden="true">
+              dressed for
+            </span>
+            <span
+              className="platform-hero__line platform-hero__line--accent"
+              aria-hidden="true"
+            >
+              the internet.
+            </span>
           </h1>
           <p className="mt-7 max-w-xl text-base leading-7 text-[#716960] sm:text-lg sm:leading-8">
             Give your clothing business a beautiful home online. Share one link,
             show your collection, and let customers order with Cash on Delivery.
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a
-              href="#how-it-works"
-              className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#39332e] px-6 text-sm font-semibold text-white transition hover:bg-[#554a41]"
-            >
-              See how it works
-            </a>
+          <div className="platform-hero__actions mt-8 flex flex-wrap items-center gap-3">
             {whatsAppUrl ? (
               <a
                 href={whatsAppUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex min-h-12 items-center justify-center rounded-full px-5 text-sm font-semibold text-[#39332e] transition hover:bg-[#ebe5dd]"
+                className="glow-surface inline-flex min-h-12 items-center justify-center rounded-full bg-[#39332e] px-6 text-sm font-semibold text-white transition hover:bg-[#554a41]"
               >
                 WhatsApp par baat karein
               </a>
-            ) : null}
+            ) : (
+              <a
+                href="#how-it-works"
+                className="glow-surface inline-flex min-h-12 items-center justify-center rounded-full bg-[#39332e] px-6 text-sm font-semibold text-white transition hover:bg-[#554a41]"
+              >
+                See how it works
+              </a>
+            )}
+            <Link
+              href="/login"
+              className="platform-hero__owner-link inline-flex min-h-12 items-center justify-center rounded-xl border border-[#d9d0c6] px-5 text-sm font-semibold text-[#39332e] transition hover:bg-[#ebe5dd]"
+            >
+              Store owner login
+            </Link>
           </div>
           <p className="mt-5 text-sm text-[#837b72]">
             Made for the way local fashion businesses sell.
           </p>
         </div>
 
-        <div className="relative mx-auto w-full max-w-[560px] lg:justify-self-end">
+        <TiltCard
+          className="platform-tilt relative mx-auto w-full max-w-[560px] lg:justify-self-end"
+          maxTilt={5}
+        >
           <div
             aria-hidden="true"
             className="absolute -right-14 -top-12 h-56 w-56 rounded-full bg-[#e6dbcf] sm:-right-10 sm:h-72 sm:w-72"
@@ -141,7 +163,7 @@ function PlatformLandingPage() {
             aria-hidden="true"
             className="absolute -bottom-10 -left-8 h-40 w-40 rounded-full border border-[#d8c9b8] sm:h-52 sm:w-52"
           />
-          <div className="relative rotate-[1.25deg] rounded-[28px] border border-[#e7e0d7] bg-white p-3 shadow-[0_28px_80px_-48px_rgba(37,33,30,0.42)] sm:rounded-[34px] sm:p-4">
+          <div className="platform-mockup glow-surface relative rounded-[28px] border border-[#e7e0d7] bg-white p-3 shadow-[0_28px_80px_-48px_rgba(37,33,30,0.42)] sm:rounded-[34px] sm:p-4">
             <div className="overflow-hidden rounded-[21px] bg-[#faf8f5] sm:rounded-[26px]">
               <div className="flex items-center justify-between border-b border-[#ebe6df] px-4 py-4 sm:px-6">
                 <div className="flex items-center gap-3">
@@ -225,10 +247,13 @@ function PlatformLandingPage() {
               One link. Your own shop.
             </p>
           </div>
-        </div>
+        </TiltCard>
       </section>
 
-      <section id="features" className="border-y border-[#e7e0d7] bg-[#fffefa]">
+      <section
+        id="features"
+        className="platform-features border-y border-[#e7e0d7] bg-[#fffefa]"
+      >
         <div className="mx-auto w-[min(100%-32px,1280px)] py-16 sm:py-20">
           <div className="max-w-xl">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8b7663]">
@@ -262,20 +287,23 @@ function PlatformLandingPage() {
                   "Let shoppers place an order without needing to create an account.",
               },
             ].map((feature) => (
-              <article
+              <Reveal
                 key={feature.number}
-                className="rounded-2xl border border-[#e7e0d7] bg-[#f7f5f1] p-5 sm:p-6"
+                className="platform-feature-reveal"
+                delayMs={Number(feature.number) * 45}
               >
-                <p className="font-serif text-xl text-[#8b7663]">
-                  {feature.number}
-                </p>
-                <h3 className="mt-6 text-base font-semibold">
-                  {feature.title}
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-[#716960]">
-                  {feature.detail}
-                </p>
-              </article>
+                <article className="rounded-2xl border border-[#e7e0d7] bg-[#f7f5f1] p-5 sm:p-6">
+                  <p className="font-serif text-xl text-[#8b7663]">
+                    {feature.number}
+                  </p>
+                  <h3 className="mt-6 text-base font-semibold">
+                    {feature.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-[#716960]">
+                    {feature.detail}
+                  </p>
+                </article>
+              </Reveal>
             ))}
           </div>
           <div
@@ -311,6 +339,32 @@ function PlatformLandingPage() {
         </div>
       </section>
 
+      <section className="platform-benefits" aria-label="Storefront benefits">
+        <div className="platform-benefits__inner">
+          <p className="platform-benefits__eyebrow">
+            A clear path from collection to order
+          </p>
+          <h2>Everything a small fashion shop needs to start online.</h2>
+          <div className="platform-benefits__grid">
+            <article>
+              <span>01</span>
+              <h3>Your link</h3>
+              <p>One address for your own storefront.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>Your collection</h3>
+              <p>Product photos, prices, sizes, and stock in one place.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>Your orders</h3>
+              <p>Customers can place an order with Cash on Delivery.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
       <footer className="mx-auto flex w-[min(100%-32px,1280px)] min-h-20 items-center justify-between gap-4 text-sm text-[#716960]">
         <span className="font-serif font-semibold text-[#25211e]">
           Libaas Online
@@ -326,7 +380,7 @@ export default async function Home({ searchParams }: HomeProps) {
   const tenantMode = requestHeaders.get("x-tenant-mode")?.trim().toLowerCase();
 
   if (tenantMode === "root-domain" || tenantMode === "none") {
-    redirect("/login");
+    return <PlatformLandingPage />;
   }
 
   const storeSlug = requestHeaders.get("x-store-slug")?.trim();
@@ -366,7 +420,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
   return (
     <StorefrontShell store={store} query={query}>
-      <main className="bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
+      <main className="storefront-page storefront-catalog bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-6xl flex-col gap-8">
           <div className="flex flex-col gap-3 border-b border-zinc-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -395,7 +449,10 @@ export default async function Home({ searchParams }: HomeProps) {
                 );
 
                 return (
-                  <article key={product.id} className="min-w-0">
+                  <article
+                    key={product.id}
+                    className="catalog-product-card min-w-0"
+                  >
                     <Link
                       href={`/products/${product.id}`}
                       className="group block text-inherit no-underline"
@@ -422,7 +479,7 @@ export default async function Home({ searchParams }: HomeProps) {
                       </div>
                       <div className="mt-3 flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <h2 className="truncate text-base font-medium text-zinc-900">
+                          <h2 className="catalog-product__name text-base font-medium text-zinc-900">
                             {product.name}
                           </h2>
                           <p

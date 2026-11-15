@@ -238,3 +238,29 @@ Product-owner decisions are recorded below. Keep refining implementation-level d
 - 2026-10-12: Added Cloudinary as the planned product image provider, preserved working WhatsApp actions as build requirements, and added first-pass route-level screen blueprints.
 - 2026-10-12: Started Phase 2 with PKR customer storefront formatting, mobile availability filters, Cloudinary delivery transformations, and interactive product gallery/zoom. Sale pricing and WhatsApp seller links remain blocked on current schema support.
 - 2026-10-12: Started Phase 3 with Roman Urdu cart/checkout copy, tenant-scoped checkout previews, Pakistani mobile validation, city plus full address captured in the existing address field, visible COD totals, and delivery-charge disclosure. Checkout API and database schema remain unchanged.
+
+## Visual redesign — 2026-11-15
+
+### Baseline audit
+
+- At 360px the platform navigation squeezed both actions into narrow buttons and wrapped their labels. The headline was strong, but the storefront mockup began below most of the first screen.
+- Root `/login` used one narrow card with substantial unused space. Store-owner access was the default and the platform-admin mode was only a small text link, so the two entry points had weak visual separation.
+- The visual language varied between routes: storefront pages mixed several radii and large shadowed cards; dashboard copy and controls used small text; the storefront header and login compositions were not balanced consistently.
+- Tenant-only catalog, product, cart, checkout, and owner dashboard routes could not be visually inspected in the local baseline because no tenant override or authenticated session was configured. Their 360px baseline requests produced the expected no-tenant 404 or root-login redirect. Route presentation was reviewed from source and styled without changing route or data behavior; real tenant screenshots remain part of QA.
+
+### Implemented system
+
+- The neutral palette remains `#F7F5F1` canvas, white surface, `#25211E` ink, `#716960` muted text, `#E7E0D7` border, and `#D6C7B8` sand. Added espresso, cream, latte, warm-highlight, canvas-to-sand, cream radial, and espresso gradients. Tenant pages derive accent-tinted surfaces from the validated six-digit accent and keep the contrast-selected foreground.
+- CSS tokens define the shared spacing, radius, content-width, easing, feedback, and reveal timing scales. Headings use the available Georgia serif stack; controls and body copy use the system sans stack with Arabic/Urdu-capable fallback. No local font assets existed, so no remote font or new font dependency was added.
+- The platform landing now has line-by-line headline entrance, a warm atmospheric hero, a fine-pointer tilt storefront visual, symmetrical feature cards, an espresso benefits band, and a centered close. The root login has a desktop split composition and equally visible owner/admin mode controls, with a compact mobile card layout.
+- Storefront shell surfaces now share more consistent radii, calmer borders, text sizes, a glass sticky header with a scroll state, and a centered tenant footer. Catalog cards keep the 4:5 frame and allow long names two readable lines. Product detail keeps the existing gallery and sticky purchase behavior and states the unavailable WhatsApp contact clearly. Cart and checkout retain their existing states; checkout confirmation receives a restrained glow.
+- Owner dashboards keep their existing workflows and authorization boundaries with calmer cards, clearer controls, and a more compact header. The platform admin overview and store administration use the same neutral tokens.
+- Reveals, pointer tilt, blur, and zoom are optional enhancements. The reveal component leaves content visible until hydrated, the tilt is limited to 8 degrees and fine pointers, and reduced motion disables motion and backdrop blur. Motion uses transform/opacity, with brief blur only on the hero text. Backdrop blur is limited to the sticky header, filter sheet, checkout bar, and image dialog, with solid fallbacks.
+
+### Baseline issues fixed
+
+The landing navigation now fits at 360px; the hero type scale and mobile spacing are controlled; root login mode selection is prominent and keyboard-visible; inputs and primary controls meet 48px sizing; repeated card surfaces use the shared 12px radius; product names wrap instead of truncating; headers, empty/error panels, and admin controls use stronger neutral contrast; metadata and stock remain text-labeled; focus rings remain visible. Existing filter-sheet and zoom-dialog interaction handling is unchanged.
+
+### Change log
+
+- 2026-11-15: Added the shared warm-neutral token and motion system, responsive landing and login compositions, capability-gated reveal/tilt interactions, storefront and owner visual refinements, and documented the unauthenticated local baseline limitation. No new dependencies or data/auth/API changes.

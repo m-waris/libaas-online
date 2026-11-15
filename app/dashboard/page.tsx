@@ -64,7 +64,7 @@ async function AdminDashboard() {
   );
 
   return (
-    <main className="min-h-screen bg-[#f7f5f1] px-5 py-8 text-zinc-900">
+    <main className="admin-dashboard min-h-screen bg-[#f7f5f1] px-5 py-8 text-zinc-900">
       <div className="mx-auto max-w-6xl">
         <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>

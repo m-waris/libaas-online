@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase/server";
 import { LoginForm } from "../../components/owner/login-form";
-import { AdminLoginForm } from "../../components/admin/admin-login-form";
+import { RootLoginPanel } from "../../components/admin/root-login-panel";
 import { isAdminAuthenticated } from "../../lib/admin-auth";
 import { getStorefrontStore } from "../../lib/queries";
 import {
@@ -21,7 +21,7 @@ export default async function LoginPage({
   const expectedStoreSlug = requestHeaders.get("x-store-slug")?.trim() || null;
   if (!expectedStoreSlug) {
     if (await isAdminAuthenticated()) redirect("/dashboard");
-    return <AdminLoginForm error={(await searchParams).error} />;
+    return <RootLoginPanel error={(await searchParams).error} />;
   }
   const publicStore = expectedStoreSlug
     ? await getStorefrontStore(expectedStoreSlug)

@@ -57,10 +57,12 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
             {/* Remote URLs can come from multiple providers; Cloudinary URLs are transformed first. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
+              key={activeImage.id}
               src={getCloudinaryImageUrl(activeImage.url, { width: 1200 })}
               alt={`${productName}, photo ${activeIndex + 1}`}
               fetchPriority="high"
               decoding="async"
+              className="product-gallery__active-image"
             />
             <span>Tap to zoom</span>
           </button>

@@ -188,7 +188,7 @@ export function ProductVariantSelector({
                 type="button"
                 onClick={handleAddToCart}
                 disabled={!canAdd}
-                className="mt-4 w-full rounded-full bg-zinc-900 px-4 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-400"
+                className="glow-surface mt-4 w-full rounded-full bg-zinc-900 px-4 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-400"
               >
                 {inStock ? "Cart mein daalo" : "Sold out"}
               </button>
@@ -210,7 +210,7 @@ export function ProductVariantSelector({
           type="button"
           onClick={handleAddToCart}
           disabled={!canAdd}
-          className="product-purchase__sticky"
+          className="glow-surface product-purchase__sticky"
         >
           {inStock ? `Cart mein daalo · ${formatCurrency(price)}` : "Sold out"}
         </button>

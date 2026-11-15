@@ -43,7 +43,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <StorefrontShell store={store}>
-      <main className="bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
+      <main className="storefront-page storefront-product bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-6xl flex-col gap-8">
           <Link
             href="/"
@@ -79,6 +79,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   </span>
                 </div>
 
+                <p className="product-cod-note">
+                  Cash on Delivery available. Delivery details seller confirm
+                  karega.
+                </p>
+
                 <div className="mt-6 space-y-3 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm leading-7 text-zinc-700">
                   <p className="font-medium text-zinc-900">Details</p>
                   <p>
@@ -92,6 +97,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 product={product}
                 variants={product.variants}
               />
+              <div className="product-contact-note" aria-label="Seller contact">
+                <h2>Seller contact</h2>
+                <p>WhatsApp contact is not available for this store yet.</p>
+              </div>
             </section>
           </div>
         </div>

@@ -24,7 +24,7 @@ export default async function CheckoutPage() {
 
   return (
     <StorefrontShell store={store}>
-      <main className="bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
+      <main className="storefront-page storefront-checkout bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-6xl flex-col gap-6">
           <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
             <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">

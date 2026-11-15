@@ -58,6 +58,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    // Keep localStorage hydration after the first server-compatible render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setItems(readInitialCart());
     setHydrated(true);
   }, []);

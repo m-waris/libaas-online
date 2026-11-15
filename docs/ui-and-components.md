@@ -23,18 +23,24 @@ Server pages load the current store and pass store/product data into client comp
 
 ## Owner components
 
+- `components/admin/root-login-panel.tsx`: switches between the root store-owner portal and admin sign-in, with a link back to the public landing page.
 - `components/owner/login-form.tsx`: Supabase Auth sign-in form with tenant/store context.
+- `components/owner/store-owner-portal-link.tsx`: collects a store slug on the root login page and sends the browser to that store host before sign-in.
 - `components/owner/owner-dashboard-shell.tsx`: lightly store-branded owner navigation and sign-out shell shared by dashboard routes.
+- `components/ui/reveal.tsx`: optional once-only intersection reveal for nonessential marketing content; the server-rendered content remains visible when JavaScript or motion support is unavailable.
+- `components/ui/tilt-card.tsx`: small pointer-driven perspective treatment, active only for fine hover pointers with reduced motion off; touch and reduced-motion layouts stay flat.
 - `app/dashboard/page.tsx`: host-aware overview cards for platform store totals/recent stores or an owner's product and order counts with links to detailed pages.
 - `components/owner/products-dashboard.tsx`: create products and variants, list inventory, toggle storefront visibility, and edit variant stock inline.
 - `components/owner/orders-dashboard.tsx`: filter recent orders, inspect customer/order details, update allowed order statuses, and open a prefilled customer WhatsApp message.
 
 Both dashboard server pages perform the server-side user and owner-store checks before rendering. Keep those access gates and corresponding RLS policies in place if the UI is reorganized. Product writes and order status changes use the authenticated browser session; owner policies constrain writes to owned records.
 
+Root `/login` uses a distinct owner/admin mode switch and a centered desktop split composition; tenant `/login` remains a store-branded sign-in screen and uses the validated accent plus a wordmark fallback. Storefront shell styling applies the same neutral tokens to catalog, product, cart, and checkout surfaces. The platform landing uses the marketing-only reveal and tilt primitives; dashboard data views remain flat and restrained.
+
 ## Current UI conventions
 
 - Tailwind CSS utility classes are used directly in components; global design tokens and shared shell styles live in `app/globals.css`.
-- Root-domain visitors go to admin login and authenticated admins see the platform overview; tenant visitors see the catalog and authenticated owners see their store overview.
+- Root-domain visitors see the public platform landing page; its login page supports platform admin sign-in and routes store owners to their store host. Authenticated admins see the platform overview; tenant visitors see the catalog and authenticated owners see their store overview.
 - Cart state is read from `localStorage` after hydration, then persisted, so server-rendered cart counts start consistently and existing carts are not overwritten during hydration.
 - Storefront and owner prices use the shared `Rs 4,500` PKR format without decimals.
 - Cart data stores variant IDs and quantities; product names/prices/stock are resolved for display within the current tenant. Missing or inactive cart variants are pruned; load failures preserve the cart. Final prices and stock are recalculated at checkout by the database RPC.

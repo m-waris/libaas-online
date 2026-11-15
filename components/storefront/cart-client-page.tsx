@@ -159,7 +159,7 @@ export function CartClientPage({ store }: CartClientPageProps) {
 
   if (loading) {
     return (
-      <main className="bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
+      <main className="storefront-page storefront-cart bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
           <span role="status">Aap ka cart load ho raha hai…</span>
         </div>
@@ -169,7 +169,7 @@ export function CartClientPage({ store }: CartClientPageProps) {
 
   if (loadError) {
     return (
-      <main className="bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
+      <main className="storefront-page storefront-cart bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl rounded-2xl border border-rose-200 bg-white p-8 shadow-sm">
           <h1 className="font-serif text-2xl">Cart load nahi ho saka.</h1>
           <p className="mt-2 text-zinc-600">{loadError}</p>
@@ -187,7 +187,7 @@ export function CartClientPage({ store }: CartClientPageProps) {
 
   if (cartItems.length === 0) {
     return (
-      <main className="bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
+      <main className="storefront-page storefront-cart bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-5xl flex-col gap-6">
           <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
             <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
@@ -214,7 +214,7 @@ export function CartClientPage({ store }: CartClientPageProps) {
   }
 
   return (
-    <main className="bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
+    <main className="storefront-page storefront-cart bg-zinc-50 px-4 py-8 text-zinc-900 sm:px-6 lg:px-8">
       <div className="mx-auto flex max-w-6xl flex-col gap-6">
         <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-3">

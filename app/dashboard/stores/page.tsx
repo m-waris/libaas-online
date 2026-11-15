@@ -43,7 +43,7 @@ export default async function StoresAdminPage({
     updated: "Store updated.",
   };
   return (
-    <main className="min-h-screen bg-[#f7f5f1] px-5 py-8 text-zinc-900">
+    <main className="admin-stores-page min-h-screen bg-[#f7f5f1] px-5 py-8 text-zinc-900">
       <div className="mx-auto max-w-6xl">
         <header className="mb-8 flex flex-wrap items-center justify-between gap-3">
           <div>

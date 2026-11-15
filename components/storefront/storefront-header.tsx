@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import { useCart } from "./cart-context";
 import type { StorefrontStore } from "../../lib/queries";
@@ -17,9 +18,17 @@ export function StorefrontHeader({
   query = "",
 }: StorefrontHeaderProps) {
   const { itemCount } = useCart();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="storefront-header">
+    <header className={`storefront-header${isScrolled ? " is-scrolled" : ""}`}>
       <div className="storefront-header__inner">
         <Link
           href="/"
@@ -88,7 +97,9 @@ export function StorefrontHeader({
           </svg>
           <span className="storefront-cart-link__label">Cart</span>
           {itemCount > 0 ? (
-            <span className="storefront-cart-link__count">{itemCount}</span>
+            <span key={itemCount} className="storefront-cart-link__count">
+              {itemCount}
+            </span>
           ) : null}
         </Link>
       </div>

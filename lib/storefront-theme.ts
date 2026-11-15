@@ -86,8 +86,12 @@ export function getStorefrontThemeStyle(store: StorefrontStore): CSSProperties {
   return {
     "--store-accent": branding.accentColor,
     "--store-accent-foreground": branding.accentForeground,
+    "--accent": branding.accentColor,
+    "--accent-foreground": branding.accentForeground,
   } as CSSProperties & {
     "--store-accent": string;
     "--store-accent-foreground": string;
+    "--accent": string;
+    "--accent-foreground": string;
   };
 }
